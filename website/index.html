@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>aPhysics — Physics Engine for Remotion & Three.js</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient expressive background shapes -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar-glass">
+    <div class="nav-container">
+      <a href="#overview" class="brand" onclick="switchTab('overview')">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">aPhysics</span>
+        <span class="badge-pill">C17 • Clang 23 • Bazel 9</span>
+      </a>
+
+      <!-- Search bar -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search docs, features, architecture..." oninput="handleSearch(this.value)">
+        <div id="searchResults" class="search-dropdown hidden"></div>
+      </div>
+
+      <!-- Nav Links & Controls -->
+      <nav class="nav-links">
+        <button class="nav-btn active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+        <button class="nav-btn" data-tab="architecture" onclick="switchTab('architecture')">Architecture</button>
+        <button class="nav-btn" data-tab="macos" onclick="switchTab('macos')">macOS Tester</button>
+        <button class="nav-btn" data-tab="agents" onclick="switchTab('agents')">Agent Skills</button>
+        <button class="nav-btn" data-tab="docs" onclick="switchTab('docs')">Docs Reader</button>
+        <button class="nav-btn" data-tab="creator" onclick="switchTab('creator')">About Creator</button>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="https://github.com/Aarav90-cpu/aPhysics" target="_blank" rel="noopener noreferrer" class="btn-icon" title="GitHub Repository">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <button id="themeToggle" class="btn-icon" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+          <span class="theme-icon">🌓</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice Banner for macOS Testers -->
+  <div class="tester-banner">
+    <div class="banner-content">
+      <span class="banner-badge">Notice</span>
+      <span>aPhysics is fully tested on <strong>Linux</strong>. macOS builds are <strong>experimental & untested</strong>.</span>
+      <a href="#macos" onclick="switchTab('macos')" class="banner-link">We are looking for macOS testers &rarr;</a>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <!-- TAB 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-panel active">
+      <div class="hero">
+        <div class="hero-badge">Physics Engine for Remotion & Three.js</div>
+        <h1 class="hero-title">Giving Digital Animations <span class="gradient-text">Real Life & Weight</span></h1>
+        <p class="hero-sub">
+          Bake in natural cloth movement, fabric tears, crunching collisions, and dynamic deformation so web animations look fluid and physical instead of rigid and static.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="switchTab('architecture')">Explore Architecture</button>
+          <a href="https://github.com/Aarav90-cpu/aPhysics" target="_blank" rel="noopener noreferrer" class="btn-secondary">GitHub Repository</a>
+        </div>
+
+        <!-- Clone box -->
+        <div class="clone-box">
+          <span class="clone-prompt">$</span>
+          <code id="cloneCommand">git clone git@github.com:Aarav90-cpu/aPhysics.git</code>
+          <button class="btn-copy" onclick="copyClone()">Copy</button>
+        </div>
+      </div>
+
+      <!-- Feature cards with Expressive Glass design -->
+      <div class="feature-grid">
+        <div class="glass-card">
+          <div class="card-icon">🧵</div>
+          <h3>Cloth & Soft-Body Movement</h3>
+          <p>Draping, wrinkles, kinetic friction, and tearing calculations designed to add depth to Three.js models.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">💥</div>
+          <h3>Crash & Impact Mechanics</h3>
+          <p>Fracture, structural collapse, and particle deformation so collisions look impactful and lifelike.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">⚡</div>
+          <h3>Zero-Copy Three.js Memory</h3>
+          <p>Direct WebAssembly linear memory mapping with <code>Float32Array</code> views. Zero buffer duplication between C and JS.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🎲</div>
+          <h3>Deterministic Seeds</h3>
+          <p>Minecraft-style seeds: set <code>1337</code> for 100% frame-reproducible Remotion renders, or use <code>0</code> for random uniqueness.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🛠️</div>
+          <h3>Clang 23 & Bazel 9</h3>
+          <p>Built strictly with modern Clang 23 and Bazel 9 for blazing compile times and deterministic toolchain sandboxing.</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🤖</div>
+          <h3>Agent-Native Design</h3>
+          <p>Strict rules in <code>AGENTS.md</code> with full compatibility for crawlers like <code>fetchIt</code> via <code>sitemap.xml</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: ARCHITECTURE -->
+    <section id="tab-architecture" class="tab-panel">
+      <div class="content-header">
+        <h2>Engine Architecture</h2>
+        <p>Deep dive into high-efficiency memory sharing and frame determinism.</p>
+      </div>
+
+      <div class="glass-card large-card">
+        <h3>1. Share Memory Directly with Three.js (Zero-Copy)</h3>
+        <p>
+          Traditional bridges copy arrays between Wasm and JavaScript per frame. For a 30,000-vertex cloth mesh at 60 FPS, that means transferring millions of floats every second, triggering Garbage Collection stutters.
+        </p>
+        <div class="code-block">
+          <div class="code-header">Zero-Copy WebAssembly & Three.js Pipeline</div>
+          <pre><code>// 1. In C: Vertex buffer is contiguous in WebAssembly linear memory
+// 2. In JavaScript: Wrap raw memory pointer with Float32Array (ZERO copies)
+const positions = new Float32Array(
+    wasmMemory.buffer,
+    wasmInstance.exports.aphysics_get_positions(),
+    vertexCount * 3
+);
+
+// 3. Bind directly to Three.js BufferAttribute
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+// 4. On each simulation step in C:
+wasmInstance.exports.aphysics_step(dt);
+geometry.attributes.position.needsUpdate = true; // WebGL streams directly to GPU VBO!</code></pre>
+        </div>
+      </div>
+
+      <div class="glass-card large-card">
+        <h3>2. Deterministic Simulation via Seeds (Minecraft-Style)</h3>
+        <p>
+          Remotion renders video frames concurrently across worker threads or cloud rendering containers. To guarantee that frame 120 looks identical whether rendered on machine A or machine B:
+        </p>
+        <ul>
+          <li><strong>Fixed Seed (<code>seed = 1337ULL</code>)</strong>: The internal PRNG produces identical perturbation vectors, folding angles, and tear thresholds every single run.</li>
+          <li><strong>Random Seed (<code>seed = 0</code>)</strong>: Uses entropy to generate a unique animation every time for creative previews.</li>
+          <li><strong>Decoupled Fixed Delta Time (&Delta;t)</strong>: The solver executes on fixed 1/60s intervals, preventing frame-time variation from causing divergence.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- TAB 3: MACOS TESTERS -->
+    <section id="tab-macos" class="tab-panel">
+      <div class="content-header">
+        <span class="badge-alert">Call for Volunteers</span>
+        <h2>Looking for macOS Testers!</h2>
+        <p>Help us test and expand aPhysics support on Apple Silicon and macOS Intel machines.</p>
+      </div>
+
+      <div class="glass-card large-card">
+        <div class="tester-status-box">
+          <div class="status-item">
+            <span class="status-dot green"></span>
+            <strong>Linux (x86_64)</strong>: Fully supported and verified in CI.
+          </div>
+          <div class="status-item">
+            <span class="status-dot orange"></span>
+            <strong>macOS (arm64 & x86_64)</strong>: Experimental & Untested on physical hardware.
+          </div>
+        </div>
+
+        <h3>Why We Need Your Help</h3>
+        <p>
+          aPhysics is configured to compile with Clang 23 and Bazel 9 on macOS, but we need hardware testing to verify:
+        </p>
+        <ul>
+          <li>Apple Silicon (M1/M2/M3/M4) NEON SIMD vectorization and floating-point determinism.</li>
+          <li>macOS Command Line Tools and Xcode toolchain compatibility.</li>
+          <li>Clean execution of <code>bazel test //...</code> on Darwin kernels.</li>
+        </ul>
+
+        <h3>How You Can Test on macOS</h3>
+        <div class="code-block">
+          <div class="code-header">Terminal Commands for macOS Testers</div>
+          <pre><code># 1. Install Bazelisk
+brew install bazelisk
+
+# 2. Clone repository
+git clone git@github.com:Aarav90-cpu/aPhysics.git
+cd aPhysics
+
+# 3. Build all targets
+bazel build //...
+
+# 4. Run tests
+bazel test //...
+
+# 5. Run executable
+bazel run //:app</code></pre>
+        </div>
+
+        <p>
+          Report any compiler warnings, build failures, or test results by opening an issue on GitHub:
+        </p>
+        <a href="https://github.com/Aarav90-cpu/aPhysics/issues/new?template=bug_report.yml" target="_blank" rel="noopener noreferrer" class="btn-primary">Submit macOS Test Report</a>
+      </div>
+    </section>
+
+    <!-- TAB 4: AGENT SKILLS -->
+    <section id="tab-agents" class="tab-panel">
+      <div class="content-header">
+        <h2>Agent Skills & Tooling</h2>
+        <p>Autonomous AI guidelines and crawler compatibility.</p>
+      </div>
+
+      <div class="glass-card large-card">
+        <h3>Autonomous Agent Rules in <code>AGENTS.md</code></h3>
+        <p>
+          This repository enforces strict operational guidelines for AI coding agents to guarantee code quality, reproducibility, and safety:
+        </p>
+        <ul>
+          <li><strong>Understand & Plan First</strong>: Agents must read code and present a detailed plan before making edits.</li>
+          <li><strong>Strict Tooling</strong>: Clang 23 only, Bazel 9 only. No GCC, no Makefiles.</li>
+          <li><strong>Mandatory Verification</strong>: Every change must be verified via Bazel build and tests, reporting exact commands and output.</li>
+          <li><strong>License Headers</strong>: Source files require Apache 2.0 headers applied through <code>addlicense</code>.</li>
+        </ul>
+      </div>
+
+      <div class="glass-card large-card">
+        <h3>Compatibility with <code>fetchIt</code></h3>
+        <p>
+          The repository and website are specifically formatted to be indexed and downloaded cleanly by <strong><a href="https://github.com/Aarav90-cpu/fetchIt" target="_blank">fetchIt</a></strong>, the documentation crawler and markdown exporter built by Aarav:
+        </p>
+        <ul>
+          <li>The root <code>sitemap.xml</code> contains the directive comment <code>&lt;!-- For FetchIt --&gt;</code> at line 1.</li>
+          <li>Semantic markdown structure allows <code>fetchIt</code> to strip noise and download complete, self-contained documentation sets.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- TAB 5: DOCS READER -->
+    <section id="tab-docs" class="tab-panel">
+      <div class="content-header">
+        <h2>Documentation Reader</h2>
+        <p>Read repository documentation directly in this browser window.</p>
+      </div>
+
+      <div class="docs-browser">
+        <div class="docs-sidebar">
+          <button class="doc-link active" onclick="loadDoc('getting_started')">getting_started.md</button>
+          <button class="doc-link" onclick="loadDoc('architecture')">architecture.md</button>
+          <button class="doc-link" onclick="loadDoc('macos_testers')">macos_testers.md</button>
+          <button class="doc-link" onclick="loadDoc('agent_skills')">agent_skills.md</button>
+          <button class="doc-link" onclick="loadDoc('agents')">AGENTS.md</button>
+        </div>
+        <div class="docs-content glass-card" id="docViewer">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: ABOUT CREATOR -->
+    <section id="tab-creator" class="tab-panel">
+      <div class="content-header">
+        <h2>About the Creator</h2>
+        <p>Meet the developer behind aPhysics, ARK OS, and fetchIt.</p>
+      </div>
+
+      <div class="glass-card creator-card">
+        <div class="creator-header">
+          <div class="creator-avatar">AK</div>
+          <div class="creator-info">
+            <h3>Aarav (Arphd4)</h3>
+            <div class="creator-tags">
+              <span class="tag">he/him</span>
+              <span class="tag">Maharashtra, India (GMT+05:30)</span>
+              <span class="tag">Aarav90-cpu</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="creator-bio">
+          "I build things because I can't help it: tools I wish existed, an operating system I probably have no business attempting, and songs that start as a half-formed idea at 2 a.m. Movies and music are a huge part of my life, and the rest is split between two obsessions: where AI is heading, and how interfaces should feel when it gets there."
+        </p>
+
+        <h3>Core Stack</h3>
+        <p>
+          <strong>Swift</strong> (home base for system-level programming), <strong>Kotlin</strong> (Android / Jetpack Compose UI experiments), <strong>C / C++</strong>, <strong>Python</strong>, and <strong>TypeScript</strong>.
+        </p>
+
+        <h3>Key Projects</h3>
+        <div class="projects-grid">
+          <div class="project-pill">
+            <strong>ARK OS</strong>
+            <span>Linux kernel OS powered by Swift (<code>libark</code>, <code>sash</code>)</span>
+          </div>
+          <div class="project-pill">
+            <strong>fetchIt</strong>
+            <span>Fast site-to-markdown documentation crawler (PyPI & AUR)</span>
+          </div>
+          <div class="project-pill">
+            <strong>MusicSkills</strong>
+            <span>AI music composition tool with Python <code>mido</code> & DAW</span>
+          </div>
+          <div class="project-pill">
+            <strong>Expressive-Glass</strong>
+            <span>UI experiment blending Apple Liquid Glass with Google Material 3 Expressive</span>
+          </div>
+        </div>
+
+        <h3>Music & YouTube Channel</h3>
+        <p>
+          Aarav produces songs around tech, AI, and humanity. Check out tracks like <em>BEYOND THE CODE</em>, <em>HUMAN BEHIND THE MACHINE</em>, and <em>One Bar of Wi-Fi</em>:
+        </p>
+        <div class="social-links">
+          <a href="https://www.youtube.com/@HandleITP" target="_blank" rel="noopener noreferrer" class="social-btn youtube">YouTube: @HandleITP</a>
+          <a href="https://github.com/Aarav90-cpu" target="_blank" rel="noopener noreferrer" class="social-btn github">GitHub: Aarav90-cpu</a>
+          <a href="https://www.reddit.com/user/Ok_Sky3062/" target="_blank" rel="noopener noreferrer" class="social-btn reddit">Reddit: u/Ok_Sky3062</a>
+          <a href="https://www.reddit.com/r/ARKEverything/" target="_blank" rel="noopener noreferrer" class="social-btn reddit">r/ARKEverything</a>
+          <a href="https://www.instagram.com/arkhandlesitp/" target="_blank" rel="noopener noreferrer" class="social-btn instagram">Instagram</a>
+          <a href="mailto:aarav.kharade1234@gmail.com" class="social-btn email">aarav.kharade1234@gmail.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-glass">
+    <div class="footer-container">
+      <p>&copy; 2026 The aPhysics Authors • Released under Apache License 2.0</p>
+      <div class="footer-links">
+        <a href="https://github.com/Aarav90-cpu/aPhysics" target="_blank">GitHub</a>
+        <a href="../sitemap.xml">Sitemap</a>
+        <a href="../LICENSE">License</a>
+        <a href="../SECURITY.md">Security</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
