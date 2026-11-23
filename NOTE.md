@@ -67,3 +67,43 @@ Physics state can be deterministic across machines, provided strict numerical co
 - **Scope of Guarantee**:
   - Determinism applies strictly to the **physics numerical state** (positions, velocities, constraints).
   - Rendered pixels (WebGL, Three.js, GPU drivers, browser compositors) may still exhibit minor rasterization variances across machines. Only claim determinism for the physics state.
+
+
+---
+
+## 4. Technical Specifications & Conventions
+
+The following core technical standards have been determined for the simulation engine:
+
+### A. Floating-Point Precision: `float`
+- **Specification**: Use single-precision `float` (32-bit IEEE 754) for all vertex positions, velocities, normals, and physical state variables.
+- **Rationale**:
+  - Three.js geometries and `THREE.BufferAttribute` use `Float32Array`.
+  - WebGL and WebGPU vertex attribute buffers operate natively on 32-bit floats.
+  - Using `float` guarantees direct zero-copy memory mapping between WebAssembly linear memory and Three.js without per-frame conversion overhead.
+  - Cuts memory consumption and bandwidth in half compared to `double`, allowing larger baked frame caches.
+
+### B. Units and Coordinate Axes
+- **Physical Units**: Standard International System of Units (SI):
+  - Length: meters ($\text{m}$)
+  - Mass: kilograms ($\text{kg}$)
+  - Time: seconds ($\text{s}$)
+  - Force: Newtons ($\text{N} = \text{kg} \cdot \text{m}/\text{s}^2$)
+- **Coordinate System**:
+  - **Right-handed, Y-up** coordinate system:
+    - $+X$: Right
+    - $+Y$: Up (gravity acts along $-Y$, default $-9.81\text{ m/s}^2$)
+    - $+Z$: Forward / towards viewer
+  - Matches the default coordinate space and camera conventions of Three.js.
+
+### C. Test Framework
+- **Specification**: Custom, lightweight assert-based test harness written in standard C (`<assert.h>` and structured test macros).
+- **Rationale**:
+  - Complies with Section 5 of `AGENTS.md` by prioritizing the C standard library over external dependencies.
+  - No external build modules, single-header libraries, or package dependencies required.
+  - Fast execution within Bazel's `cc_test` environment.
+
+### D. Project and Package Naming
+- **NPM Package Registry Check**: Checked on npm registry — `aphysics` is currently unregistered and available (`404 Not Found`).
+- **Primary Package Name**: `aphysics`
+- **Fallback Suffixes**: `aphysics-tool` or scoped `@arphd4/aphysics` if reservation conflicts arise during initial publishing.
