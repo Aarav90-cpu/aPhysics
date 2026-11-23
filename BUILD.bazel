@@ -1,4 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("//tools:aph.bzl", "APH_COPTS")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -6,22 +7,14 @@ cc_library(
     name = "aphysics",
     srcs = ["src/app.c"],
     hdrs = ["include/app.h"],
-    copts = [
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-    ],
+    copts = APH_COPTS,
     includes = ["include"],
 )
 
 cc_binary(
     name = "app",
     srcs = ["src/main.c"],
-    copts = [
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-    ],
+    copts = APH_COPTS,
     includes = ["include"],
     deps = [":aphysics"],
 )
@@ -29,11 +22,7 @@ cc_binary(
 cc_test(
     name = "app_test",
     srcs = ["src/main.c"],
-    copts = [
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-    ],
+    copts = APH_COPTS,
     includes = ["include"],
     deps = [":aphysics"],
 )

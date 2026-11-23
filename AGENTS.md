@@ -215,4 +215,5 @@ Go through this list and report it to the user:
 ## 13. Other files to read before Execution
 
 - AGENTS.md - This file
-- NOTE.md
+- agentrules/NOTE.md
+- agentrules/NamingRules.md
