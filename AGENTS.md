@@ -211,3 +211,8 @@ Go through this list and report it to the user:
 - [ ] New files have the license header.
 - [ ] I have told the user how to check the feature, and I am waiting for
       their confirmation.
+
+## 13. Other files to read before Execution
+
+- AGENTS.md - This file
+- NOTE.md
