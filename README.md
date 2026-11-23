@@ -8,19 +8,38 @@
 [![Language](https://img.shields.io/badge/Language-C17-blue.svg)](https://en.wikipedia.org/wiki/C17_(C_standard_revision))
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20(Experimental)-orange.svg)](#supported-platforms)
 
-A physics engine for Remotion and Three.js animations. It bakes in cloth movement, crash dynamics, deformation, and physical constraints so that animations appear natural, dynamic, and lifelike instead of static.
+A physics engine for Remotion and Three.js animations aiming to bake in cloth movement, crash dynamics, deformation, and physical constraints so that animations appear natural, dynamic, and lifelike instead of static.
 
 ---
 
-## Features
+## Current Status
 
-- **Cloth & Soft-Body Movement**: Simulates realistic drape, wrinkles, tearing, and motion for fabric in 3D scenes.
-- **Crash & Impact Mechanics**: Calculates deformation, fracture, and collisions for dynamic animation sequences.
-- **Remotion & Three.js Integration**: Designed specifically for web-based animation pipelines and programmatic rendering.
-- **Deterministic Simulation via Seeds**:
-  - **Reproducible Seeds**: Set a 64-bit seed (e.g., `1337`) to produce identical simulation trajectories, crumple patterns, and cloth folds across runs (ideal for frame-accurate Remotion video rendering).
-  - **Randomized Seeds**: Omit the seed or pass `0` to generate a fresh, unique simulation run each time.
-- **Zero-Copy Memory Sharing with Three.js**: Direct WebAssembly linear memory mapping allows Three.js `BufferAttribute` to read simulation vertex data without copying memory buffers between C/Wasm and JavaScript.
+> **Notice**: The repository is currently in the foundational infrastructure phase. The physics engine components listed below are planned architectural features and are actively under design.
+
+- [x] Bazel 9 build setup (`9.2.0` pinned in `.bazelversion`)
+- [x] Clang 23+ toolchain configuration in `.bazelrc`
+- [x] Cross-platform GitHub Actions CI (Ubuntu & macOS runners) with `clang-format` and `cppcheck`
+- [ ] *[Planned]* Point-mass & spring-mass integration baseline (Milestone 1)
+- [ ] *[Planned]* Zero-Copy WebAssembly linear memory sharing with Three.js
+- [ ] *[Planned]* Deterministic 64-bit seed reproduction for Remotion
+- [ ] *[Planned]* Cloth simulation & soft-body drape mechanics
+- [ ] *[Planned]* Crash deformation & fracture mechanics
+
+---
+
+## Planned Architecture & Roadmap
+
+For full design specifications, see [docs/architecture.md](docs/architecture.md).
+
+- **[Planned] Zero-Copy Memory Sharing with Three.js**:
+  Mapping C vertex buffers directly in WebAssembly linear memory to Three.js `BufferAttribute` via `Float32Array` views, avoiding per-frame memory copies.
+- **[Planned] Deterministic Simulation via Seeds**:
+  - *Fixed Seeds (e.g. `1337`)*: Frame-exact, bit-reproducible video rendering across distributed Remotion rendering workers.
+  - *Randomized Seeds (`0`)*: Dynamic, unique animation trajectories for interactive previews.
+- **[Planned] Cloth & Soft-Body Movement**:
+  Simulating realistic drape, wrinkles, tearing, and motion for fabric in 3D scenes.
+- **[Planned] Crash & Impact Dynamics**:
+  Calculating deformation and fracture for dynamic collisions in animation sequences.
 
 ---
 
@@ -36,23 +55,7 @@ A physics engine for Remotion and Three.js animations. It bakes in cloth movemen
 ## Supported Platforms
 
 - **Linux**: Primary development and tested platform. Fully supported.
-- **macOS**: Experimental and currently untested. We are actively looking for macOS testers! See [docs/macos_testers.md](docs/macos_testers.md).
-
----
-
-## Architecture: Zero-Copy Memory Sharing
-
-When simulating complex meshes (e.g., thousands of vertices for cloth or debris), serializing or copying buffer data between WebAssembly and JavaScript causes frame-rate degradation.
-
-aPhysics maps vertex buffers directly to Three.js:
-
-1. **Contiguous Buffer**: The C engine allocates vertex coordinates in contiguous linear memory.
-2. **Pointer Export**: The engine exports memory pointers (e.g., `aphysics_get_positions()`).
-3. **TypedArray View**: JavaScript instantiates a `Float32Array` view directly into `WebAssembly.Memory.buffer` at the pointer offset.
-4. **Three.js Binding**: The `Float32Array` is bound directly into `THREE.BufferAttribute`.
-5. **GPU Upload**: On each simulation step in C, setting `geometry.attributes.position.needsUpdate = true` instructs WebGL to upload the buffer directly to the GPU without intermediate copies.
-
-For in-depth architectural details, see [docs/architecture.md](docs/architecture.md).
+- **macOS**: Experimental and currently untested on physical hardware. See [docs/macos_testers.md](docs/macos_testers.md).
 
 ---
 
@@ -91,16 +94,10 @@ For setup instructions and prerequisites, see [docs/getting_started.md](docs/get
 ## Documentation
 
 - [Getting Started Guide](docs/getting_started.md)
-- [Architecture & Zero-Copy Memory](docs/architecture.md)
+- [Planned Architecture: Zero-Copy & Seeds](docs/architecture.md)
 - [Looking for macOS Testers!](docs/macos_testers.md)
 - [Agent Skills & Tool Integration](docs/agent_skills.md)
 - [Web Documentation Portal](website/index.html) (or [index.md](index.md))
-
----
-
-## Hashtags
-
-`#aPhysics` `#Remotion` `#ThreeJS` `#WebGL` `#WebAssembly` `#Wasm` `#PhysicsEngine` `#ClothSimulation` `#CrashPhysics` `#CreativeCoding` `#IndieDev` `#OpenSource` `#Clang23` `#BazelBuild` `#C17` `#ZeroCopy` `#GameDev` `#Simulation` `#AnimationDev` `#LinuxDev`
 
 ---
 

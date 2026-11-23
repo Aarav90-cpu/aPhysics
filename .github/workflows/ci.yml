@@ -38,10 +38,16 @@ jobs:
           disk-cache: ${{ github.workflow }}-${{ matrix.os }}
           repository-cache: true
 
-      - name: Display environment versions
+      - name: Verify Clang version (>= 23) and environment
         run: |
           clang --version
           bazel --version
+          CLANG_MAJOR=$(clang -dumpversion | cut -d. -f1)
+          echo "Detected Clang major version: $CLANG_MAJOR"
+          if [ "$CLANG_MAJOR" -lt 23 ]; then
+            echo "Error: Clang version 23 or higher is required (found version $CLANG_MAJOR)."
+            exit 1
+          fi
 
       - name: Build project
         run: |

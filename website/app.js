@@ -47,10 +47,10 @@ bazel test //...</code></pre>
   architecture: {
     title: "architecture.md",
     content: `
-      <h2>Architecture: Zero-Copy Memory & Determinism</h2>
-      <p>aPhysics is designed specifically to eliminate performance bottlenecks when streaming simulation data into Three.js inside Remotion video rendering pipelines.</p>
+      <h2>Architecture Design: Zero-Copy Memory & Determinism (Planned)</h2>
+      <p><em>Notice: These architectural specifications represent the planned design for aPhysics.</em></p>
       
-      <h3>1. Zero-Copy Memory Sharing</h3>
+      <h3>1. [Planned] Zero-Copy Memory Sharing</h3>
       <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics allocates vertex buffers inside this memory and exports the memory offset pointer.</p>
       <pre><code>// Direct typed array view over WebAssembly linear memory
 const positions = new Float32Array(

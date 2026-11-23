@@ -1,6 +1,6 @@
 # aPhysics Web & Documentation Hub
 
-Welcome to the documentation portal for **aPhysics**, a modern, high-performance physics engine built in C for **Remotion** and **Three.js** animations.
+Welcome to the documentation portal for **aPhysics**, a physics engine in C for **Remotion** and **Three.js** animations.
 
 > 🌐 **Interactive Web Experience**: Open [`website/index.html`](website/index.html) in your browser for the full fluid, animated dark/light UI with integrated search and documentation browser.
 
@@ -9,7 +9,7 @@ Welcome to the documentation portal for **aPhysics**, a modern, high-performance
 ## Quick Navigation
 
 - [Documentation: Getting Started](docs/getting_started.md)
-- [Documentation: Zero-Copy Architecture & Seeds](docs/architecture.md)
+- [Architecture: Zero-Copy & Seeds (Planned)](docs/architecture.md)
 - [Platform Notice: Looking for macOS Testers!](docs/macos_testers.md)
 - [Agent Standards: Agent Skills & Tools](docs/agent_skills.md)
 - [Interactive Web App](website/index.html)
@@ -17,18 +17,19 @@ Welcome to the documentation portal for **aPhysics**, a modern, high-performance
 
 ---
 
-## About the Project
+## Current Status & Roadmap
 
-aPhysics bakes realistic cloth dynamics, collision reactions, tearing, and deformation directly into 3D scenes so that Remotion video renders and Three.js canvas animations look vibrant, lifelike, and physically grounded.
+The repository currently provides the build and continuous integration foundation. Physics simulation modules are in active design:
 
-### Core Architecture Pillars
-
-1. **Share Memory Directly with Three.js (Zero-Copy)**:
-   Vertex positions are modified directly inside WebAssembly linear memory and bound to `THREE.BufferAttribute(positions, 3)`. WebGL streams changes straight to the GPU VBO without intermediate JavaScript array copies.
-2. **Deterministic Simulation via 64-bit Seeds**:
-   Pass a fixed 64-bit seed (e.g., `1337`) for frame-exact, bit-reproducible video rendering across distributed Remotion workers, or use `0` for interactive randomness.
-3. **Clang 23 & Bazel 9 Only**:
-   Engineered for maximum optimization and modern build ergonomics. GCC and Makefiles are not supported.
+- [x] Bazel 9 build setup (`9.2.0`)
+- [x] Clang 23+ compiler toolchain configuration
+- [x] C17 standard enforcement via `.bazelrc`
+- [x] Multi-platform CI with `clang-format` and `cppcheck`
+- [ ] *[Planned]* Milestone 1: Particle & spring-mass integrator
+- [ ] *[Planned]* Zero-Copy Three.js linear memory bridge
+- [ ] *[Planned]* Deterministic 64-bit seed reproduction
+- [ ] *[Planned]* Cloth simulation & soft-body movement
+- [ ] *[Planned]* Crash dynamics & deformation mechanics
 
 ---
 
@@ -54,19 +55,9 @@ bazel build //...
 # Run the test suite
 bazel test //...
 
-# Run the physics engine binary
+# Run the binary
 bazel run //:app
 ```
-
----
-
-## Agent Skills & Guidelines
-
-This repository follows strict autonomous agent guidelines in [`AGENTS.md`](AGENTS.md). All AI coding agents, background workflows, and crawlers adhere to:
-- Documented Clang 23 and Bazel 9 commands.
-- Verification through `bazel build //...` and `bazel test //...`.
-- Apache 2.0 license headers applied to all source files via `addlicense`.
-- Dedicated integration with **[fetchIt](https://github.com/Aarav90-cpu/fetchIt)** using [`sitemap.xml`](sitemap.xml).
 
 ---
 
