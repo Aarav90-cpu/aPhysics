@@ -10,36 +10,34 @@
 
 A physics engine for Remotion and Three.js animations aiming to bake in cloth movement, crash dynamics, deformation, and physical constraints so that animations appear natural, dynamic, and lifelike instead of static.
 
+> **Status: pre-alpha. No physics yet.**
+
 ---
 
 ## Current Status
 
-> **Notice**: The repository is currently in the foundational infrastructure phase. The physics engine components listed below are planned architectural features and are actively under design.
+The repository currently contains only the project foundation, compiler toolchain setup, and testing infrastructure:
 
-- [x] Bazel 9 build setup (`9.2.0` pinned in `.bazelversion`)
-- [x] Clang 23+ toolchain configuration in `.bazelrc`
+- [x] Bazel 9 build system (`9.2.0` pinned in `.bazelversion`)
+- [x] Clang 23+ compiler toolchain configuration in `.bazelrc`
+- [x] C17 standard enforcement
 - [x] Cross-platform GitHub Actions CI (Ubuntu & macOS runners) with `clang-format` and `cppcheck`
-- [ ] *[Planned]* Point-mass & spring-mass integration baseline (Milestone 1)
-- [ ] *[Planned]* Zero-Copy WebAssembly linear memory sharing with Three.js
-- [ ] *[Planned]* Deterministic 64-bit seed reproduction for Remotion
-- [ ] *[Planned]* Cloth simulation & soft-body drape mechanics
-- [ ] *[Planned]* Crash deformation & fracture mechanics
+- [x] Basic test harness structure in `BUILD.bazel`
 
 ---
 
-## Planned Architecture & Roadmap
+## Planned Features
 
-For full design specifications, see [docs/architecture.md](docs/architecture.md).
+The physics engine is in active design. All simulation features below are planned and not yet implemented:
 
-- **[Planned] Zero-Copy Memory Sharing with Three.js**:
-  Mapping C vertex buffers directly in WebAssembly linear memory to Three.js `BufferAttribute` via `Float32Array` views, avoiding per-frame memory copies.
-- **[Planned] Deterministic Simulation via Seeds**:
-  - *Fixed Seeds (e.g. `1337`)*: Frame-exact, bit-reproducible video rendering across distributed Remotion rendering workers.
-  - *Randomized Seeds (`0`)*: Dynamic, unique animation trajectories for interactive previews.
-- **[Planned] Cloth & Soft-Body Movement**:
-  Simulating realistic drape, wrinkles, tearing, and motion for fabric in 3D scenes.
-- **[Planned] Crash & Impact Dynamics**:
-  Calculating deformation and fracture for dynamic collisions in animation sequences.
+- **[Planned] Milestone 1**: Single point-mass and damped spring-mass integrator core with test suite.
+- **[Planned] Zero-Copy Memory Views**: Direct WebAssembly linear memory mapping with `Float32Array` views to eliminate JavaScript-side copies when streaming to Three.js `BufferAttribute`.
+- **[Planned] Seeded Determinism**: Caller-provided 64-bit seed (e.g. `1337`) producing bit-identical simulation states across distributed Remotion workers.
+- **[Planned] Cloth Simulation**: Position-based dynamics (PBD) for fabric drape, wrinkles, shear/bend constraints, and tearing.
+- **[Planned] Crash & Impact Dynamics**: Collision detection, structural collapse, deformation, and fracture mechanics.
+- **[Planned] Bake Engine**: Simulating once forward and caching per-frame vertex buffers for random-access playback by frame number in Remotion.
+
+For the detailed design specification, see [docs/architecture.md](docs/architecture.md) and [agentrules/NOTE.md](agentrules/NOTE.md).
 
 ---
 
@@ -94,10 +92,17 @@ For setup instructions and prerequisites, see [docs/getting_started.md](docs/get
 ## Documentation
 
 - [Getting Started Guide](docs/getting_started.md)
-- [Planned Architecture: Zero-Copy & Seeds](docs/architecture.md)
+- [Architecture: Design (not implemented)](docs/architecture.md)
 - [Looking for macOS Testers!](docs/macos_testers.md)
 - [Agent Skills & Tool Integration](docs/agent_skills.md)
-- [Web Documentation Portal](website/index.html) (or [index.md](index.md))
+- [Key Design Decisions](agentrules/NOTE.md)
+- [Naming & Layout Rules](agentrules/NamingRules.md)
+
+---
+
+## Hashtags
+
+`#aPhysics` `#Remotion` `#ThreeJS` `#WebGL` `#WebAssembly` `#Wasm` `#PhysicsEngine` `#ClothSimulation` `#CrashPhysics` `#CreativeCoding` `#IndieDev` `#OpenSource` `#Clang23` `#BazelBuild` `#C17` `#ZeroCopy` `#GameDev` `#Simulation` `#AnimationDev` `#LinuxDev`
 
 ---
 

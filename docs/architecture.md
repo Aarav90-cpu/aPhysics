@@ -1,6 +1,6 @@
-# Architecture Design: Zero-Copy Memory & Determinism (Planned)
+# Architecture: Design (not implemented)
 
-> **Notice**: The features described in this document represent the planned architectural specification for aPhysics. Implementation is in progress.
+> **Notice**: The features described in this document represent the planned architectural specification for aPhysics. **No physics simulation code is implemented yet.**
 
 aPhysics is designed specifically to eliminate performance bottlenecks when streaming simulation data into Three.js inside Remotion video rendering pipelines.
 
@@ -9,7 +9,7 @@ aPhysics is designed specifically to eliminate performance bottlenecks when stre
 ## 1. [Planned] Zero-Copy Memory Sharing with Three.js
 
 ### The Problem
-Traditional physics bridges serialize simulation state to JSON or copy large arrays across the WebAssembly-to-JavaScript boundary on every frame. When simulating cloth meshes with tens of thousands of vertices, copying buffers triggers heavy CPU usage and Garbage Collection (GC) pauses.
+Traditional physics bridges serialize simulation state to JSON or copy large arrays across the WebAssembly-to-JavaScript boundary on every frame. When simulating cloth meshes with tens of thousands of vertices, copying buffers in JavaScript triggers heavy CPU usage and Garbage Collection (GC) pauses.
 
 ### The Planned Zero-Copy Architecture
 WebAssembly memory is backed by a contiguous `ArrayBuffer`. aPhysics plans to allocate vertex buffers inside this memory and export the memory offset pointer:
@@ -45,14 +45,17 @@ WebAssembly memory is backed by a contiguous `ArrayBuffer`. aPhysics plans to al
 |   geometry.attributes.position.needsUpdate = true;        |
 +-----------------------------------------------------------+
          |
-         v
+         v (Hardware copy over bus)
 +-----------------------------------------------------------+
 | GPU Vertex Buffer Object (VBO)                            |
-| Uploaded directly by WebGL from wasmMemory.buffer         |
+| Uploaded by WebGL driver to GPU VRAM                      |
 +-----------------------------------------------------------+
 ```
 
-Because `Float32Array` directly views the WebAssembly memory buffer, **zero buffer copies** occur in JavaScript. WebGL uploads the updated vertex data directly to the GPU VBO.
+### Accurate Scope & Boundaries
+- **No JavaScript-Side Copy**: Constructing a `Float32Array` view over `wasmMemory.buffer` allows JavaScript to read simulation vertex data without copying bytes in the JS runtime.
+- **GPU Upload Is Still a Copy**: The transfer of vertex data from system RAM (WebAssembly memory) to the GPU VBO is a hardware memory copy across the internal bus. "No JavaScript-side copy" is accurate; "no copies at all" is not.
+- **Memory Growth Handling**: If WebAssembly memory expands via `memory.grow()`, the previous `ArrayBuffer` becomes detached and existing typed array views are invalidated. The memory size must either be fixed upfront or views recreated upon growth.
 
 ---
 
@@ -60,11 +63,16 @@ Because `Float32Array` directly views the WebAssembly memory buffer, **zero buff
 
 For Remotion animation rendering, frame-accurate determinism is critical. Remotion renders frames concurrently across multiple worker processes or cloud renderers.
 
-1. **Stateful Pseudo-Random Number Generation**:
+### Determinism Rules & Pure C Engine
+1. **Pure C Engine (No Time Entropy)**:
+   - The C core is strictly pure and deterministic. It **never** reads system clocks, timers, or OS entropy sources.
+   - The caller must supply the 64-bit seed explicitly.
+   - The JavaScript wrapper is responsible for turning "no seed" into a pseudo-random seed and returning it to the user so every run can be replayed identically.
+2. **Deterministic PRNG**:
    - Internal perturbation functions (wrinkle noise, fabric tearing thresholds, structural crumple vectors) will rely on a deterministic 64-bit PRNG (e.g., SplitMix64 or PCG32).
-2. **Fixed Seed Mode**:
-   - Passing an explicit seed (e.g. `1337ULL`) will guarantee that every simulation run produces the exact same vertex trajectories on every machine.
-3. **Random Seed Mode**:
-   - Passing `0` or omitting the seed will initialize the generator with time entropy, providing unique behavior for interactive previews.
+3. **Fixed Seed Mode**:
+   - Passing an explicit seed (e.g. `1337ULL`) guarantees that every simulation run produces the exact same vertex trajectories on every machine.
 4. **Decoupled Fixed Delta Time ($\Delta t$)**:
    - The physics integrator calculates states at fixed time steps (e.g., $1/60\text{ s}$), preventing frame-rate fluctuations from altering the simulation outcome.
+5. **State Hashing Verification**:
+   - Simulation state will be hashed after $N$ steps to verify bit-level determinism between Linux and macOS CI runners, and between native binaries and WebAssembly builds.
