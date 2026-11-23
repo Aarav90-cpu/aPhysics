@@ -1,0 +1,33 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_binary(
+    name = "app",
+    srcs = [
+        "include/app.h",
+        "src/main.c",
+    ],
+    copts = [
+        "-std=c17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    includes = ["include"],
+)
+
+cc_test(
+    name = "app_test",
+    srcs = [
+        "include/app.h",
+        "src/main.c",
+    ],
+    copts = [
+        "-std=c17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    includes = ["include"],
+)

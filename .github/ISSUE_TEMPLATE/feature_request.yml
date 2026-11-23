@@ -1,0 +1,65 @@
+name: "Feature Request"
+description: "Propose a new feature, physics model, or capability for aPhysics"
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an idea to make **aPhysics** better!
+        We welcome proposals for new physics constraints, integrators, performance optimizations, and animation toolchain integrations.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem or Use Case"
+      description: "Is your feature request related to a problem or a specific animation/physics challenge?"
+      placeholder: "e.g., When animating rigid bodies in Remotion, simulating cloth/soft-body physics requires..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Proposed Solution"
+      description: "Describe the feature or API design you would like to see."
+      placeholder: "Provide details on how you envision the feature working, including API signatures or mathematical models if applicable..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: integration-context
+    attributes:
+      label: "Integration with Remotion / Three.js"
+      description: "How would this feature integrate with or improve Remotion and Three.js workflows?"
+      placeholder: "e.g., Enables frame-accurate deterministic physics interpolation between keyframes in Remotion..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      description: "Any alternative solutions or workarounds you've considered."
+      placeholder: "Describe any alternate approaches or existing libraries you looked into..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: "Additional Context"
+      description: "Add any other context, references, papers, or screenshots about the feature request."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      description: "Please confirm the following:"
+      options:
+        - label: "I have checked that this feature hasn't already been requested or implemented."
+          required: true
+        - label: "I am willing to contribute or help test this feature if accepted."
+          required: false

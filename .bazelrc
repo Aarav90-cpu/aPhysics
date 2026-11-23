@@ -1,0 +1,8 @@
+# Build configuration enforcing Clang and C17
+build --action_env=CC=clang
+build --repo_env=CC=clang
+build --conlyopt=-std=c17
+build --conlyopt=-Wall
+build --conlyopt=-Wextra
+build --conlyopt=-Werror
+test --test_output=errors

@@ -1,0 +1,32 @@
+# Bazel output symlinks and cache
+bazel-*
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-aphysics
+
+# Object files and compiled binaries
+*.o
+*.a
+*.so
+*.dylib
+*.out
+bin/
+build/
+
+# Packaging and archives
+*.tar.gz
+*.zip
+package/
+release_dist/
+
+# OS and Editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

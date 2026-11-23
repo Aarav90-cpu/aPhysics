@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Questions & Discussions"
+    url: "https://github.com/aarav/aPhysics/discussions"
+    about: "Ask questions, share animation demos, and discuss general ideas with the community."
+  - name: "Security Vulnerability Report"
+    url: "https://github.com/aarav/aPhysics/security/advisories/new"
+    about: "Report security vulnerabilities responsibly and confidentially."
