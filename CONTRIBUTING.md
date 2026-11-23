@@ -48,7 +48,7 @@ bazel clean
    ```
 3. **License Headers**: Every new source file must include the Apache 2.0 license header. Apply it using `addlicense`:
    ```bash
-   addlicense -l apache -c "The aPhysics Authors" src/*.c include/*.h
+   addlicense -l apache -c "Aarav Ravindra Kharade" src/*.c include/*.h
    ```
 4. **Pull Requests**:
    - Write clear commit messages.

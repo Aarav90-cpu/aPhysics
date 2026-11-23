@@ -1,13 +1,11 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
-    name = "app",
-    srcs = [
-        "include/app.h",
-        "src/main.c",
-    ],
+cc_library(
+    name = "aphysics",
+    srcs = ["src/app.c"],
+    hdrs = ["include/app.h"],
     copts = [
         "-std=c17",
         "-Wall",
@@ -17,12 +15,9 @@ cc_binary(
     includes = ["include"],
 )
 
-cc_test(
-    name = "app_test",
-    srcs = [
-        "include/app.h",
-        "src/main.c",
-    ],
+cc_binary(
+    name = "app",
+    srcs = ["src/main.c"],
     copts = [
         "-std=c17",
         "-Wall",
@@ -30,4 +25,18 @@ cc_test(
         "-Werror",
     ],
     includes = ["include"],
+    deps = [":aphysics"],
+)
+
+cc_test(
+    name = "app_test",
+    srcs = ["src/main.c"],
+    copts = [
+        "-std=c17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    includes = ["include"],
+    deps = [":aphysics"],
 )

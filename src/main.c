@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
 #include "app.h"
-
-void greet(const char *name) {
-    printf("Hello, %s!\n", name);
-}
 
 int main(void) {
     greet("world");

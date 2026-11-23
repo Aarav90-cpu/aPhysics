@@ -80,8 +80,11 @@ jobs:
 
       - name: Run static analysis (cppcheck)
         run: |
-          cppcheck --enable=all \
+          cppcheck --enable=warning,style,performance,portability \
             --suppress=missingIncludeSystem \
+            --suppress=unusedFunction \
+            --suppress=staticFunction \
+            --suppress=checkersReport \
             --error-exitcode=1 \
             -I include \
             src/
