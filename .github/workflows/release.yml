@@ -33,6 +33,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Clang 23 (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 23
+          sudo ln -sf /usr/bin/clang-23 /usr/local/bin/clang
+          sudo ln -sf /usr/bin/clang++-23 /usr/local/bin/clang++
+
       - name: Set up Bazel
         uses: bazel-contrib/setup-bazel@0.19.2
         with:

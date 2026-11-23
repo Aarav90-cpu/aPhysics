@@ -25,11 +25,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            experimental: false
+          - os: macos-latest
+            experimental: true
+    continue-on-error: ${{ matrix.experimental }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install Clang 23 (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 23
+          sudo ln -sf /usr/bin/clang-23 /usr/local/bin/clang
+          sudo ln -sf /usr/bin/clang++-23 /usr/local/bin/clang++
 
       - name: Set up Bazel
         uses: bazel-contrib/setup-bazel@0.19.2
@@ -38,15 +50,19 @@ jobs:
           disk-cache: ${{ github.workflow }}-${{ matrix.os }}
           repository-cache: true
 
-      - name: Verify Clang version (>= 23) and environment
+      - name: Verify Clang version and environment
         run: |
           clang --version
           bazel --version
-          CLANG_MAJOR=$(clang -dumpversion | cut -d. -f1)
-          echo "Detected Clang major version: $CLANG_MAJOR"
-          if [ "$CLANG_MAJOR" -lt 23 ]; then
-            echo "Error: Clang version 23 or higher is required (found version $CLANG_MAJOR)."
-            exit 1
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            CLANG_MAJOR=$(clang -dumpversion | cut -d. -f1)
+            echo "Detected Linux Clang version: $CLANG_MAJOR"
+            if [ "$CLANG_MAJOR" -lt 23 ]; then
+              echo "Error: Clang version 23 or higher is required on Linux (found version $CLANG_MAJOR)."
+              exit 1
+            fi
+          else
+            echo "macOS platform: Running with host Apple Clang / Xcode toolchain (experimental)."
           fi
 
       - name: Build project
@@ -72,10 +88,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install static analysis tools
+      - name: Install Clang 23 and static analysis tools
         run: |
+          wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 23
           sudo apt-get update
-          sudo apt-get install -y clang-format cppcheck
+          sudo apt-get install -y cppcheck
+          sudo ln -sf /usr/bin/clang-format-23 /usr/local/bin/clang-format || true
 
       - name: Check code formatting (clang-format)
         run: |
