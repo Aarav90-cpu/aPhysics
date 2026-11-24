@@ -38,6 +38,7 @@ To ensure binary forward and backward compatibility as the physics engine evolve
   } aphysics_config;
   ```
 - **Rationale**: This allows the library to inspect `struct_size` to detect which revision of a struct the caller compiled against, enabling future fields to be added without breaking existing callers or WebAssembly bindings.
+- **Internal vs. Public Note**: Internal engine structs (prefixed with `aph_`, such as `aph_world_config`) do not use `struct_size`. A public `aphysics_*` layer with versioned structs, `float[3]` vectors and public status names is designed with the wasm exports (step 3.3).
 
 ---
 

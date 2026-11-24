@@ -70,6 +70,21 @@ cc_library(
     deps = [":aph_status"],
 )
 
+cc_library(
+    name = "aph_world",
+    srcs = ["src/core/aph_world.c"],
+    hdrs = ["src/core/aph_world.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+    deps = [
+        ":aph_arena",
+        ":aph_hash",
+        ":aph_log",
+        ":aph_math",
+        ":aph_status",
+    ],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -166,4 +181,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_log"],
+)
+
+cc_test(
+    name = "world_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_world.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_world"],
 )

@@ -32,6 +32,7 @@ build:asan --copt=-fsanitize=address
 build:asan --copt=-fno-omit-frame-pointer
 build:asan --copt=-g
 build:asan --linkopt=-fsanitize=address
+test:asan --test_env=ASAN_OPTIONS=allocator_may_return_null=1
 
 # UndefinedBehaviorSanitizer (UBSan) configuration
 build:ubsan --strip=never
