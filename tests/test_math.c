@@ -205,6 +205,269 @@ static void test_vec3_lerp(void) {
     APH_CHECK_NEAR(l_half.z, (a.z + b.z) * 0.5f, 1e-6f);
 }
 
+static void test_quat_identity(void) {
+    aph_quat id = aph_quat_identity();
+    APH_CHECK(id.x == 0.0f);
+    APH_CHECK(id.y == 0.0f);
+    APH_CHECK(id.z == 0.0f);
+    APH_CHECK(id.w == 1.0f);
+
+    aph_vec3 v = aph_vec3_make(1.5f, -2.5f, 3.75f);
+    aph_vec3 rot = aph_quat_rotate(id, v);
+    APH_CHECK(rot.x == v.x && rot.y == v.y && rot.z == v.z);
+}
+
+static void test_quat_conjugate_and_inverse(void) {
+    aph_vec3 axis = aph_vec3_make(1.0f, 2.0f, 3.0f);
+    aph_quat q = aph_quat_from_axis_angle(axis, 0.65f);
+
+    aph_quat conj = aph_quat_conjugate(q);
+    APH_CHECK(conj.x == -q.x);
+    APH_CHECK(conj.y == -q.y);
+    APH_CHECK(conj.z == -q.z);
+    APH_CHECK(conj.w == q.w);
+
+    /* Quaternion multiplied by its conjugate equals identity: q * q* = (0, 0, 0, 1) */
+    aph_quat prod = aph_quat_mul(q, conj);
+    APH_CHECK_NEAR(prod.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(prod.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(prod.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(prod.w, 1.0f, 1e-6f);
+}
+
+static void test_quat_mul_order(void) {
+    /*
+     * aph_quat_mul(a, b) applies rotation b first, then a: v' = a(b(v)).
+     * Test case:
+     *   a = 90 deg about Z
+     *   b = 90 deg about X
+     * When rotating X = (1, 0, 0) by aph_quat_mul(a, b):
+     *   b (90 deg about X) leaves X unchanged: b(X) = X.
+     *   a (90 deg about Z) turns X into Y: a(X) = Y.
+     * Therefore, aph_quat_mul(a, b) on X must yield Y = (0, 1, 0).
+     */
+    float pi_over_2 = 1.57079632679f;
+    aph_quat a = aph_quat_from_axis_angle(aph_vec3_make(0.0f, 0.0f, 1.0f), pi_over_2);
+    aph_quat b = aph_quat_from_axis_angle(aph_vec3_make(1.0f, 0.0f, 0.0f), pi_over_2);
+
+    aph_quat ab = aph_quat_mul(a, b);
+    aph_vec3 x_axis = aph_vec3_make(1.0f, 0.0f, 0.0f);
+    aph_vec3 res_ab = aph_quat_rotate(ab, x_axis);
+
+    APH_CHECK_NEAR(res_ab.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(res_ab.y, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(res_ab.z, 0.0f, 1e-6f);
+
+    /*
+     * The reverse order aph_quat_mul(b, a) would rotate X by a first (turning X to Y),
+     * then by b (turning Y to Z), resulting in Z = (0, 0, 1).
+     */
+    aph_quat ba = aph_quat_mul(b, a);
+    aph_vec3 res_ba = aph_quat_rotate(ba, x_axis);
+
+    APH_CHECK_NEAR(res_ba.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(res_ba.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(res_ba.z, 1.0f, 1e-6f);
+}
+
+static void test_quat_normalize(void) {
+    aph_quat q = {0.0f, 0.0f, 3.0f, 4.0f};
+    aph_quat n = aph_quat_normalize(q);
+    APH_CHECK_NEAR(n.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(n.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(n.z, 0.6f, 1e-6f);
+    APH_CHECK_NEAR(n.w, 0.8f, 1e-6f);
+
+    /* Zero quaternion normalizes to identity */
+    aph_quat zero = {0.0f, 0.0f, 0.0f, 0.0f};
+    aph_quat n_zero = aph_quat_normalize(zero);
+    APH_CHECK(n_zero.x == 0.0f && n_zero.y == 0.0f && n_zero.z == 0.0f && n_zero.w == 1.0f);
+
+    /* Sub-epsilon quaternion normalizes to identity */
+    aph_quat tiny = {0.5e-6f, 0.0f, 0.0f, 0.0f};
+    aph_quat n_tiny = aph_quat_normalize(tiny);
+    APH_CHECK(n_tiny.x == 0.0f && n_tiny.y == 0.0f && n_tiny.z == 0.0f && n_tiny.w == 1.0f);
+
+    /* NaN input propagates NaN */
+    float nan_val = 0.0f / 0.0f;
+    aph_quat q_nan = {nan_val, 0.0f, 0.0f, 1.0f};
+    aph_quat n_nan = aph_quat_normalize(q_nan);
+    APH_CHECK(isnan(n_nan.x));
+    APH_CHECK(isnan(n_nan.w));
+}
+
+static void test_quat_from_axis_angle(void) {
+    /* Zero axis returns identity */
+    aph_vec3 zero_axis = aph_vec3_make(0.0f, 0.0f, 0.0f);
+    aph_quat q_zero_axis = aph_quat_from_axis_angle(zero_axis, 1.57f);
+    APH_CHECK(q_zero_axis.x == 0.0f && q_zero_axis.y == 0.0f && q_zero_axis.z == 0.0f &&
+              q_zero_axis.w == 1.0f);
+
+    /* Sub-epsilon axis returns identity */
+    aph_vec3 tiny_axis = aph_vec3_make(0.5e-6f, 0.0f, 0.0f);
+    aph_quat q_tiny = aph_quat_from_axis_angle(tiny_axis, 1.57f);
+    APH_CHECK(q_tiny.x == 0.0f && q_tiny.y == 0.0f && q_tiny.z == 0.0f && q_tiny.w == 1.0f);
+
+    /* Unnormalized axis (0, 0, 2) matches unit axis (0, 0, 1) */
+    aph_vec3 unit_axis = aph_vec3_make(0.0f, 0.0f, 1.0f);
+    aph_vec3 scaled_axis = aph_vec3_make(0.0f, 0.0f, 2.0f);
+    aph_quat q_unit = aph_quat_from_axis_angle(unit_axis, 0.8f);
+    aph_quat q_scaled = aph_quat_from_axis_angle(scaled_axis, 0.8f);
+    APH_CHECK_NEAR(q_scaled.x, q_unit.x, 1e-6f);
+    APH_CHECK_NEAR(q_scaled.y, q_unit.y, 1e-6f);
+    APH_CHECK_NEAR(q_scaled.z, q_unit.z, 1e-6f);
+    APH_CHECK_NEAR(q_scaled.w, q_unit.w, 1e-6f);
+
+    /* Angle 0 returns identity */
+    aph_quat q_angle_zero = aph_quat_from_axis_angle(unit_axis, 0.0f);
+    APH_CHECK_NEAR(q_angle_zero.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(q_angle_zero.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(q_angle_zero.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(q_angle_zero.w, 1.0f, 1e-6f);
+
+    /* NaN angle propagates NaN */
+    float nan_val = 0.0f / 0.0f;
+    aph_quat q_nan_angle = aph_quat_from_axis_angle(unit_axis, nan_val);
+    APH_CHECK(isnan(q_nan_angle.x) || isnan(q_nan_angle.z));
+    APH_CHECK(isnan(q_nan_angle.w));
+}
+
+static void test_rotations_strong(void) {
+    float pi_over_2 = 1.57079632679f;
+    aph_vec3 x = aph_vec3_make(1.0f, 0.0f, 0.0f);
+    aph_vec3 y = aph_vec3_make(0.0f, 1.0f, 0.0f);
+    aph_vec3 z = aph_vec3_make(0.0f, 0.0f, 1.0f);
+
+    /* 1. Rotate X by +90 deg about Z gives +Y */
+    aph_quat q_z90 = aph_quat_from_axis_angle(z, pi_over_2);
+    aph_mat3 m_z90 = aph_mat3_from_quat(q_z90);
+    aph_vec3 rot_q_z = aph_quat_rotate(q_z90, x);
+    aph_vec3 rot_m_z = aph_mat3_mul_vec3(&m_z90, x);
+    APH_CHECK_NEAR(rot_q_z.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_z.y, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_z.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_z.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_z.y, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_z.z, 0.0f, 1e-6f);
+
+    /* 2. Rotate Y by +90 deg about X gives +Z */
+    aph_quat q_x90 = aph_quat_from_axis_angle(x, pi_over_2);
+    aph_mat3 m_x90 = aph_mat3_from_quat(q_x90);
+    aph_vec3 rot_q_x = aph_quat_rotate(q_x90, y);
+    aph_vec3 rot_m_x = aph_mat3_mul_vec3(&m_x90, y);
+    APH_CHECK_NEAR(rot_q_x.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_x.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_x.z, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_x.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_x.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_x.z, 1.0f, 1e-6f);
+
+    /* 3. Rotate Z by +90 deg about Y gives +X */
+    aph_quat q_y90 = aph_quat_from_axis_angle(y, pi_over_2);
+    aph_mat3 m_y90 = aph_mat3_from_quat(q_y90);
+    aph_vec3 rot_q_y = aph_quat_rotate(q_y90, z);
+    aph_vec3 rot_m_y = aph_mat3_mul_vec3(&m_y90, z);
+    APH_CHECK_NEAR(rot_q_y.x, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_y.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_y.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_y.x, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_y.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_y.z, 0.0f, 1e-6f);
+
+    /* 4. Rotate X by -90 deg about Z gives -Y (checks right-hand rule) */
+    aph_quat q_zn90 = aph_quat_from_axis_angle(z, -pi_over_2);
+    aph_mat3 m_zn90 = aph_mat3_from_quat(q_zn90);
+    aph_vec3 rot_q_zn = aph_quat_rotate(q_zn90, x);
+    aph_vec3 rot_m_zn = aph_mat3_mul_vec3(&m_zn90, x);
+    APH_CHECK_NEAR(rot_q_zn.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_zn.y, -1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_zn.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_zn.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_zn.y, -1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_zn.z, 0.0f, 1e-6f);
+
+    /*
+     * 5. Rotate 120 deg (2*pi/3) about (1, 1, 1).
+     * Permutes the axes: X -> Y, Y -> Z, Z -> X.
+     * Uses every single entry of the 3x3 rotation matrix.
+     */
+    float angle_120 = 2.09439510239f; /* 2 * pi / 3 */
+    aph_vec3 axis_111 = aph_vec3_make(1.0f, 1.0f, 1.0f);
+    aph_quat q_120 = aph_quat_from_axis_angle(axis_111, angle_120);
+    aph_mat3 m_120 = aph_mat3_from_quat(q_120);
+
+    /* X -> Y */
+    aph_vec3 rot_q_120_x = aph_quat_rotate(q_120, x);
+    aph_vec3 rot_m_120_x = aph_mat3_mul_vec3(&m_120, x);
+    APH_CHECK_NEAR(rot_q_120_x.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_x.y, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_x.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_x.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_x.y, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_x.z, 0.0f, 1e-6f);
+
+    /* Y -> Z */
+    aph_vec3 rot_q_120_y = aph_quat_rotate(q_120, y);
+    aph_vec3 rot_m_120_y = aph_mat3_mul_vec3(&m_120, y);
+    APH_CHECK_NEAR(rot_q_120_y.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_y.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_y.z, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_y.x, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_y.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_y.z, 1.0f, 1e-6f);
+
+    /* Z -> X */
+    aph_vec3 rot_q_120_z = aph_quat_rotate(q_120, z);
+    aph_vec3 rot_m_120_z = aph_mat3_mul_vec3(&m_120, z);
+    APH_CHECK_NEAR(rot_q_120_z.x, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_z.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_q_120_z.z, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_z.x, 1.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_z.y, 0.0f, 1e-6f);
+    APH_CHECK_NEAR(rot_m_120_z.z, 0.0f, 1e-6f);
+}
+
+static void test_mat3_transpose_properties(void) {
+    /* Use the 120 deg rotation about (1, 1, 1) to test a dense matrix */
+    aph_vec3 axis = aph_vec3_make(1.0f, 2.0f, 3.0f);
+    aph_quat q = aph_quat_from_axis_angle(axis, 1.15f);
+    aph_mat3 m = aph_mat3_from_quat(q);
+
+    aph_mat3 m_t = aph_mat3_transpose(&m);
+    aph_mat3 m_tt = aph_mat3_transpose(&m_t);
+
+    /* (M^T)^T == M */
+    for (int i = 0; i < 9; ++i) {
+        APH_CHECK(m.m[i] == m_tt.m[i]);
+    }
+
+    /*
+     * For an orthogonal matrix, M^T is the inverse: M^T(M * v) == v.
+     * Tested on basis vectors and a generic vector.
+     */
+    aph_vec3 test_vectors[4] = {
+        aph_vec3_make(1.0f, 0.0f, 0.0f),
+        aph_vec3_make(0.0f, 1.0f, 0.0f),
+        aph_vec3_make(0.0f, 0.0f, 1.0f),
+        aph_vec3_make(1.5f, -2.7f, 3.8f),
+    };
+
+    for (int i = 0; i < 4; ++i) {
+        aph_vec3 v = test_vectors[i];
+        aph_vec3 v_fwd = aph_mat3_mul_vec3(&m, v);
+        aph_vec3 v_back = aph_mat3_mul_vec3(&m_t, v_fwd);
+        APH_CHECK_NEAR(v_back.x, v.x, 1e-6f);
+        APH_CHECK_NEAR(v_back.y, v.y, 1e-6f);
+        APH_CHECK_NEAR(v_back.z, v.z, 1e-6f);
+
+        /* Matrix multiplication matches direct quaternion rotation */
+        aph_vec3 v_quat = aph_quat_rotate(q, v);
+        APH_CHECK_NEAR(v_fwd.x, v_quat.x, 1e-6f);
+        APH_CHECK_NEAR(v_fwd.y, v_quat.y, 1e-6f);
+        APH_CHECK_NEAR(v_fwd.z, v_quat.z, 1e-6f);
+    }
+}
+
 int main(void) {
     test_vec3_make();
     test_vec3_add_sub();
@@ -215,6 +478,14 @@ int main(void) {
     test_vec3_length();
     test_vec3_normalize_or_zero();
     test_vec3_lerp();
+
+    test_quat_identity();
+    test_quat_conjugate_and_inverse();
+    test_quat_mul_order();
+    test_quat_normalize();
+    test_quat_from_axis_angle();
+    test_rotations_strong();
+    test_mat3_transpose_properties();
 
     if (aph_test_failures == 0) {
         printf("math_test: all checks passed.\n");
