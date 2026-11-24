@@ -58,8 +58,9 @@ if [ "$OS_NAME" = "Darwin" ]; then
     # Check Apple Clang build macro vs upstream Clang
     APPLE_BUILD=$(echo "__apple_build_version__" | "$COMPILER" -E -P - 2>/dev/null | tr -d '[:space:]')
     if [ "$APPLE_BUILD" != "__apple_build_version__" ]; then
-        if [ "$CLANG_MAJOR" -lt 26 ]; then
-            echo "Error: Apple Clang version 26 or higher is required for Xcode 26.0+ (found Apple Clang $CLANG_MAJOR)." >&2
+        # Apple Clang version 21+ corresponds to Xcode 26.0+
+        if [ "$CLANG_MAJOR" -lt 21 ]; then
+            echo "Error: Apple Clang version 21 or higher (from Xcode 26.0+) is required (found Apple Clang $CLANG_MAJOR)." >&2
             exit 1
         fi
         echo "Verified: Apple Clang $CLANG_MAJOR (Xcode 26+ compatible) on macOS."

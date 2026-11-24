@@ -21,8 +21,7 @@ We are actively seeking contributors and testers on macOS!
 If you have a Mac running macOS 13+:
 
 1. **Install Prerequisites**:
-   - Xcode Command Line Tools (`xcode-select --install`)
-   - Clang (version 23 or newer)
+   - Xcode 26.0+ Command Line Tools (with Apple Clang 21+) or upstream Clang 23+
    - Bazelisk (`brew install bazelisk`)
 
 2. **Clone and Build**:
