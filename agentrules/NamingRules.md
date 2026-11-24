@@ -91,13 +91,9 @@ agentrules/               # Persistent AI coding agent rules (NOTE.md, NamingRul
 
 ## 5. Bazel Compiler Flags & Build Rules
 
-- **Shared Compiler Flags**: Define shared compilation flags once in `tools/aph.bzl` as `APH_COPTS` rather than duplicating them in every target rule:
-  ```python
-  APH_COPTS = [
-      "-Wall",
-      "-Wextra",
-      "-Werror",
-  ]
-  ```
-- Targets in `BUILD.bazel` load `APH_COPTS` via `load("//tools:aph.bzl", "APH_COPTS")`.
-- Global dialect flags (`-std=c17`, `-ffp-contract=off`, `CC=clang`) are maintained in `.bazelrc`.
+- **Single Source of Truth (`.bazelrc`)**: All global compiler flags, dialects, and sanitizer configurations are centralized exclusively in `.bazelrc`:
+  - Always enabled: `-std=c17`, `-Wall`, `-Wextra`, `-Werror`, `-ffp-contract=off`, `-fno-math-errno`.
+  - Strictly forbidden: `-ffast-math`.
+  - AddressSanitizer: `--config=asan` (`-fsanitize=address`, `-fno-omit-frame-pointer`, `-g`, `--linkopt=-fsanitize=address`).
+  - UndefinedBehaviorSanitizer: `--config=ubsan` (`-fsanitize=undefined`, `-g`, `--linkopt=-fsanitize=undefined`).
+- **Target Copts**: `tools/aph.bzl` exports `APH_COPTS = []` so that targets do not duplicate compiler flags already enforced globally by `.bazelrc`. Target-specific flags (if ever required) can be added cleanly without collision.

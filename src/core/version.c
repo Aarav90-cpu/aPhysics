@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef APP_H
-#define APP_H
+#include "aphysics.h"
 
-void greet(const char *name);
-
-#endif
+const char *aphysics_version(void) {
+    return APHYSICS_VERSION_STRING;
+}

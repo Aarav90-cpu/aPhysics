@@ -1,8 +1,43 @@
-# Build configuration enforcing Clang and C17
+# Copyright 2026 Aarav Ravindra Kharade
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Build configuration enforcing Clang toolchain
 build --action_env=CC=clang
 build --repo_env=CC=clang
+
+# Default compiler flags for C source compilation
+# Enforces C17, strict warnings as errors, strict IEEE determinism, and disables math errno.
+# Note: -ffast-math must NEVER be enabled.
 build --conlyopt=-std=c17
 build --conlyopt=-Wall
 build --conlyopt=-Wextra
 build --conlyopt=-Werror
+build --conlyopt=-ffp-contract=off
+build --conlyopt=-fno-math-errno
+
+# AddressSanitizer (ASan) configuration
+build:asan --strip=never
+build:asan --copt=-fsanitize=address
+build:asan --copt=-fno-omit-frame-pointer
+build:asan --copt=-g
+build:asan --linkopt=-fsanitize=address
+
+# UndefinedBehaviorSanitizer (UBSan) configuration
+build:ubsan --strip=never
+build:ubsan --copt=-fsanitize=undefined
+build:ubsan --copt=-g
+build:ubsan --linkopt=-fsanitize=undefined
+
+# Test execution defaults
 test --test_output=errors

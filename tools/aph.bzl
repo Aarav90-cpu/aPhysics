@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Common compiler options and Starlark definitions for aPhysics."""
+"""Common Starlark definitions for aPhysics.
 
-APH_COPTS = [
-    "-Wall",
-    "-Wextra",
-    "-Werror",
-]
+All global compiler flags (-std=c17, -Wall, -Wextra, -Werror, -ffp-contract=off,
+-fno-math-errno) and sanitizer configs (--config=asan, --config=ubsan) are
+centralized in .bazelrc as the single source of truth.
+"""
+
+APH_COPTS = []

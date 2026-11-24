@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
-#include "app.h"
+#ifndef APHYSICS_H
+#define APHYSICS_H
 
-void greet(const char *name) {
-    printf("Hello, %s!\n", name);
-}
+#define APHYSICS_VERSION_MAJOR 0
+#define APHYSICS_VERSION_MINOR 1
+#define APHYSICS_VERSION_PATCH 0
+#define APHYSICS_VERSION_STRING "0.1.0"
+
+/**
+ * Returns the version string of the aPhysics library.
+ *
+ * Returns a constant, null-terminated string (e.g. "0.1.0").
+ */
+const char *aphysics_version(void);
+
+#endif /* APHYSICS_H */

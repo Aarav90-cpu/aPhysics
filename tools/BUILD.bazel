@@ -12,4 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("//tools:aph.bzl", "APH_COPTS")
+
 package(default_visibility = ["//visibility:public"])
+
+cc_binary(
+    name = "aphysics_info",
+    srcs = ["info.c"],
+    copts = APH_COPTS,
+    deps = ["//:aphysics"],
+)

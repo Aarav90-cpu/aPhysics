@@ -100,12 +100,6 @@ For setup instructions and prerequisites, see [docs/getting_started.md](docs/get
 
 ---
 
-## Hashtags
-
-`#aPhysics` `#Remotion` `#ThreeJS` `#WebGL` `#WebAssembly` `#Wasm` `#PhysicsEngine` `#ClothSimulation` `#CrashPhysics` `#CreativeCoding` `#IndieDev` `#OpenSource` `#Clang23` `#BazelBuild` `#C17` `#ZeroCopy` `#GameDev` `#Simulation` `#AnimationDev` `#LinuxDev`
-
----
-
 ## License
 
 This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for details.

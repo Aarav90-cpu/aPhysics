@@ -54,16 +54,7 @@ jobs:
         run: |
           clang --version
           bazel --version
-          if [ "${{ runner.os }}" = "Linux" ]; then
-            CLANG_MAJOR=$(clang -dumpversion | cut -d. -f1)
-            echo "Detected Linux Clang version: $CLANG_MAJOR"
-            if [ "$CLANG_MAJOR" -lt 23 ]; then
-              echo "Error: Clang version 23 or higher is required on Linux (found version $CLANG_MAJOR)."
-              exit 1
-            fi
-          else
-            echo "macOS platform: Running with host Apple Clang / Xcode toolchain (experimental)."
-          fi
+          ./tools/check_clang_version.sh
 
       - name: Build project
         run: |
@@ -71,7 +62,7 @@ jobs:
 
       - name: Run application
         run: |
-          bazel run //:app
+          bazel run //tools:aphysics_info
 
       - name: Run tests
         run: |
@@ -95,9 +86,19 @@ jobs:
           sudo apt-get install -y cppcheck
           sudo ln -sf /usr/bin/clang-format-23 /usr/local/bin/clang-format || true
 
+      - name: Install addlicense
+        run: |
+          go install github.com/google/addlicense@v1.1.1
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
+      - name: Check license headers (addlicense)
+        run: |
+          addlicense -check -l apache -c "Aarav Ravindra Kharade" -y 2026 \
+            $(find . -type f \( -name "*.c" -o -name "*.h" -o -name "*.bzl" -o -name "*.sh" -o -name "BUILD.bazel" -o -name ".bazelrc" \) ! -path "./.git/*")
+
       - name: Check code formatting (clang-format)
         run: |
-          FILES=$(find src include -type f \( -name "*.c" -o -name "*.h" \))
+          FILES=$(find src include tests tools -type f \( -name "*.c" -o -name "*.h" \))
           if [ -n "$FILES" ]; then
             clang-format --dry-run --Werror $FILES
           fi
@@ -113,15 +114,43 @@ jobs:
             -I include \
             src/
 
+  sanitizers:
+    name: Sanitizers (ASan & UBSan)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Clang 23
+        run: |
+          wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 23
+          sudo ln -sf /usr/bin/clang-23 /usr/local/bin/clang
+          sudo ln -sf /usr/bin/clang++-23 /usr/local/bin/clang++
+
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.19.2
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}-sanitizers
+          repository-cache: true
+
+      - name: Run AddressSanitizer (ASan) tests
+        run: |
+          bazel test --config=asan --test_output=errors //...
+
+      - name: Run UndefinedBehaviorSanitizer (UBSan) tests
+        run: |
+          bazel test --config=ubsan --test_output=errors //...
+
   ci-success:
     name: CI Status Gate
-    needs: [build-and-test, lint-and-format]
+    needs: [build-and-test, lint-and-format, sanitizers]
     runs-on: ubuntu-latest
     if: always()
     steps:
       - name: Verify all checks passed
         run: |
-          if [ "${{ needs.build-and-test.result }}" != "success" ] || [ "${{ needs.lint-and-format.result }}" != "success" ]; then
+          if [ "${{ needs.build-and-test.result }}" != "success" ] || [ "${{ needs.lint-and-format.result }}" != "success" ] || [ "${{ needs.sanitizers.result }}" != "success" ]; then
             echo "CI checks failed!"
             exit 1
           fi
