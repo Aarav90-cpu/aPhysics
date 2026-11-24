@@ -19,13 +19,19 @@
 
 /**
  * Standard status codes returned by internal engine functions.
+ *
+ * Notice:
+ *   These integer values are part of the engine ABI and are never renumbered.
+ *   New status codes must be appended with new values.
  */
 typedef enum aph_status {
     APH_OK = 0,
     APH_ERR_INVALID_ARGUMENT = 1,
     APH_ERR_OUT_OF_MEMORY = 2,
     APH_ERR_BUFFER_TOO_SMALL = 3,
-    APH_ERR_NOT_INITIALIZED = 4
+    APH_ERR_NOT_INITIALIZED = 4,
+    APH_ERR_UNSUPPORTED = 5,
+    APH_ERR_INTERNAL = 6
 } aph_status;
 
 /**
@@ -49,6 +55,10 @@ static inline const char *aph_status_string(aph_status status) {
         return "APH_ERR_BUFFER_TOO_SMALL";
     case APH_ERR_NOT_INITIALIZED:
         return "APH_ERR_NOT_INITIALIZED";
+    case APH_ERR_UNSUPPORTED:
+        return "APH_ERR_UNSUPPORTED";
+    case APH_ERR_INTERNAL:
+        return "APH_ERR_INTERNAL";
     default:
         return "APH_ERR_UNKNOWN";
     }

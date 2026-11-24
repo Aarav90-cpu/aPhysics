@@ -26,6 +26,8 @@ static void test_status_strings(void) {
     APH_CHECK(strcmp(aph_status_string(APH_ERR_OUT_OF_MEMORY), "APH_ERR_OUT_OF_MEMORY") == 0);
     APH_CHECK(strcmp(aph_status_string(APH_ERR_BUFFER_TOO_SMALL), "APH_ERR_BUFFER_TOO_SMALL") == 0);
     APH_CHECK(strcmp(aph_status_string(APH_ERR_NOT_INITIALIZED), "APH_ERR_NOT_INITIALIZED") == 0);
+    APH_CHECK(strcmp(aph_status_string(APH_ERR_UNSUPPORTED), "APH_ERR_UNSUPPORTED") == 0);
+    APH_CHECK(strcmp(aph_status_string(APH_ERR_INTERNAL), "APH_ERR_INTERNAL") == 0);
     APH_CHECK(strcmp(aph_status_string((aph_status)999), "APH_ERR_UNKNOWN") == 0);
 }
 

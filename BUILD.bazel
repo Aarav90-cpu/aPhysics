@@ -61,6 +61,15 @@ cc_library(
     includes = ["src"],
 )
 
+cc_library(
+    name = "aph_log",
+    srcs = ["src/core/aph_log.c"],
+    hdrs = ["src/core/aph_log.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+    deps = [":aph_status"],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -143,4 +152,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_hash"],
+)
+
+cc_test(
+    name = "log_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_log.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_log"],
 )

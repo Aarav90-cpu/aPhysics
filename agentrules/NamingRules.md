@@ -51,7 +51,9 @@ To ensure binary forward and backward compatibility as the physics engine evolve
       APH_ERR_INVALID_ARGUMENT = 1,
       APH_ERR_OUT_OF_MEMORY = 2,
       APH_ERR_BUFFER_TOO_SMALL = 3,
-      APH_ERR_NOT_INITIALIZED = 4
+      APH_ERR_NOT_INITIALIZED = 4,
+      APH_ERR_UNSUPPORTED = 5,
+      APH_ERR_INTERNAL = 6
   } aph_status;
 
   /* Example: returns status, output object returned via out pointer */
