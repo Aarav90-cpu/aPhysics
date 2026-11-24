@@ -54,6 +54,13 @@ cc_library(
     deps = [":aph_status"],
 )
 
+cc_library(
+    name = "aph_hash",
+    hdrs = ["src/core/aph_hash.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -122,4 +129,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_arena"],
+)
+
+cc_test(
+    name = "hash_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_hash.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_hash"],
 )

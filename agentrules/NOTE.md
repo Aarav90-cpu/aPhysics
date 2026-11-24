@@ -62,7 +62,7 @@ Physics state can be deterministic across machines, provided strict numerical co
   - The caller must supply the seed explicitly.
   - The JavaScript wrapper is responsible for turning "no seed" into a pseudo-random seed and returning it to the user so any simulation run can be reproduced.
 - **Verification via State Hashing**:
-  - Test determinism by hashing the entire simulation state (e.g. via xxHash or SHA-256) after $N$ simulation steps.
+  - Test determinism by hashing the simulation state (raw float arrays) via 64-bit FNV-1a (`aph_hash_bytes`) after $N$ simulation steps. FNV-1a was chosen because it requires no external dependencies and detects accidental divergence across runs.
   - Assert that this hash matches identically across runs, between Linux and macOS CI runners, and between native binaries and WebAssembly targets.
 - **Scope of Guarantee**:
   - Determinism applies strictly to the **physics numerical state** (positions, velocities, constraints).
