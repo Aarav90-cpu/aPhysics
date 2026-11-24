@@ -32,6 +32,13 @@ cc_library(
     includes = ["src"],
 )
 
+cc_library(
+    name = "aph_rng",
+    hdrs = ["src/core/aph_rng.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -58,4 +65,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_math"],
+)
+
+cc_test(
+    name = "rng_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_rng.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_rng"],
 )
