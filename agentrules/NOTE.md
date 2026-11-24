@@ -55,7 +55,7 @@ Physics state can be deterministic across machines, provided strict numerical co
   - Do not use `-ffast-math`.
   - Enforce `-ffp-contract=off` to prevent differing fused multiply-add (FMA) hardware instructions across distinct CPU architectures.
 - **Standard Math Functions**:
-  - Results from standard math library calls (`sin`, `cos`, `pow`, `sqrt`) can vary slightly across different standard C library implementations (e.g., glibc, musl, macOS libSystem).
+  - Results from standard math library transcendental calls (such as `sin`, `cos`, `pow`) can vary slightly across different standard C library implementations (e.g., glibc, musl, macOS libSystem). Note that `sqrtf()` is correctly rounded under IEEE 754 and deterministic across compliant platforms.
   - Test numerical consistency or provide dedicated cross-platform approximations where exact bit-level matching is required.
 - **Pure C Engine**:
   - The C physics core must never query system clocks, time functions, or system entropy devices.
@@ -101,7 +101,7 @@ The following core technical standards have been determined for the simulation e
 - **Rationale**:
   - Complies with Section 5 of `AGENTS.md` by prioritizing the C standard library over external dependencies.
   - No external build modules, single-header libraries, or package dependencies required.
-  - Fast execution within Bazel's `cc_test` environment.
+  - Clean execution within Bazel's `cc_test` environment without external dependencies.
 
 ### D. Project and Package Naming
 - **NPM Package Registry Check**: Checked on npm registry — `aphysics` is currently unregistered and available (`404 Not Found`).

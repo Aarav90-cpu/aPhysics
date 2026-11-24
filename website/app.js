@@ -38,7 +38,7 @@ cd aPhysics
 bazel build //...
 
 # Run the physics binary
-bazel run //:app
+bazel run //tools:aphysics_info
 
 # Run the test suite
 bazel test //...</code></pre>
@@ -122,7 +122,7 @@ bazel test //...</code></pre>
 // Search database items
 const searchIndex = [
   { title: "Zero-Copy Memory", desc: "Share memory directly with Three.js via Float32Array", tab: "architecture" },
-  { title: "Deterministic Seeds", desc: "Minecraft-style 64-bit seeds for reproducible physics", tab: "architecture" },
+  { title: "Deterministic Seeds", desc: "64-bit seeds for reproducible physics simulations", tab: "architecture" },
   { title: "macOS Tester Guide", desc: "Help test aPhysics on Apple Silicon and Intel Macs", tab: "macos" },
   { title: "Getting Started", desc: "Prerequisites, Bazel 9 & Clang 23 build instructions", tab: "docs", doc: "getting_started" },
   { title: "Clang 23 & Bazel 9", desc: "Strict build requirements and compiler flags", tab: "overview" },

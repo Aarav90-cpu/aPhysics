@@ -160,8 +160,10 @@ static void test_world_step_and_null(void) {
     }
     APH_CHECK(aph_world_step_count(w) == 10);
 
-    /* NULL world check on step */
+    /* NULL world checks on step, step_count, and hash */
     APH_CHECK(aph_world_step(NULL) == APH_ERR_INVALID_ARGUMENT);
+    APH_CHECK(aph_world_step_count(NULL) == 0);
+    APH_CHECK(aph_world_hash(NULL) == 0);
 
     aph_world_destroy(w);
 }

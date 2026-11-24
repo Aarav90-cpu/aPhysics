@@ -17,14 +17,14 @@ Thank you for your interest in contributing to aPhysics!
 # Build all targets
 bazel build //...
 
-# Build specific binary
-bazel build //:app
+# Build info binary
+bazel build //tools:aphysics_info
 ```
 
 ### Running the Application
 
 ```bash
-bazel run //:app
+bazel run //tools:aphysics_info
 ```
 
 ### Running Tests
@@ -44,7 +44,7 @@ bazel clean
 1. **Compiler Warnings**: Code must compile without warnings under `-Wall -Wextra -Werror`.
 2. **Formatting**: Ensure your code conforms to `.clang-format` before submitting pull requests:
    ```bash
-   clang-format --dry-run --Werror src/*.c include/*.h
+   clang-format --dry-run --Werror src/core/*.[ch] tests/*.[ch] tools/*.[ch] include/*.h
    ```
 3. **License Headers**: Every new source file must include the Apache 2.0 license header. Apply it using `addlicense`:
    ```bash

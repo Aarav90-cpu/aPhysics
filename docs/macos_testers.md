@@ -34,7 +34,7 @@ If you have a Mac running macOS 13+:
 
 3. **Run the Binary & Tests**:
    ```bash
-   bazel run //:app
+   bazel run //tools:aphysics_info
    bazel test //...
    ```
 

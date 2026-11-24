@@ -184,6 +184,11 @@ static void test_log_level_filtering(void) {
     aph_log(APH_LOG_DEBUG, "core", "Debug passed");
     APH_CHECK(cap.call_count == 7);
 
+    /* 5. Message with printf format characters is treated literally */
+    aph_log(APH_LOG_INFO, "core", "Literal specifiers %s %d %x %p must not crash.");
+    APH_CHECK(cap.call_count == 8);
+    APH_CHECK(strcmp(cap.last_msg, "Literal specifiers %s %d %x %p must not crash.") == 0);
+
     aph_set_log_callback(NULL, NULL);
     aph_set_log_level(APH_LOG_INFO);
 }

@@ -26,7 +26,7 @@ Please describe the tests that you ran to verify your changes:
 
 - [ ] Built with Clang 23 and Bazel 9 (`bazel build //...`)
 - [ ] Executed tests with Bazel (`bazel test //...`)
-- [ ] Verified application run (`bazel run //:app`)
+- [ ] Verified application run (`bazel run //tools:aphysics_info`)
 - [ ] Verified clean target (`bazel clean`)
 - [ ] Verified formatting (`clang-format --dry-run --Werror ...`)
 - [ ] Verified Apache 2.0 license headers (`addlicense -check ...`)

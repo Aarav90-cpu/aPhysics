@@ -49,12 +49,12 @@ jobs:
 
       - name: Build release binary with Bazel
         run: |
-          bazel build --compilation_mode=opt //:app
+          bazel build --compilation_mode=opt //tools:aphysics_info
 
       - name: Package release artifact
         run: |
           mkdir -p package
-          cp bazel-bin/app package/${{ matrix.artifact_name }}
+          cp bazel-bin/tools/aphysics_info package/${{ matrix.artifact_name }}
           cp README.md LICENSE NOTICE package/
           tar -czvf ${{ matrix.archive_name }} -C package .
           sha256sum ${{ matrix.archive_name }} > ${{ matrix.archive_name }}.sha256

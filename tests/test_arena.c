@@ -42,6 +42,14 @@ static void test_arena_init(void) {
         status = aph_arena_init(&a, buffer + offset, sizeof(buffer) - (size_t)offset);
         APH_CHECK(status == APH_ERR_INVALID_ARGUMENT);
     }
+
+    /* 4. Zero capacity initialization: valid, but any non-zero allocation fails with OOM */
+    status = aph_arena_init(&a, buffer, 0);
+    APH_CHECK(status == APH_OK);
+    APH_CHECK(a.capacity == 0);
+    void *zero_cap_ptr = (void *)0x1234;
+    APH_CHECK(aph_arena_alloc(&a, 1, 1, &zero_cap_ptr) == APH_ERR_OUT_OF_MEMORY);
+    APH_CHECK(zero_cap_ptr == NULL);
 }
 
 static void test_arena_alloc_alignment(void) {

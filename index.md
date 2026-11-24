@@ -56,7 +56,7 @@ bazel build //...
 bazel test //...
 
 # Run the binary
-bazel run //:app
+bazel run //tools:aphysics_info
 ```
 
 ---

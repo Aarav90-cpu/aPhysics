@@ -23,6 +23,7 @@ The repository currently contains only the project foundation, compiler toolchai
 - [x] C17 standard enforcement
 - [x] Cross-platform GitHub Actions CI (Ubuntu & macOS runners) with `clang-format` and `cppcheck`
 - [x] Basic test harness structure in `BUILD.bazel`
+- [x] Phase 1 Core Subsystems (math, splitmix64 PRNG, arena allocator, FNV-1a hashing, status codes, logging, and world skeleton)
 
 ---
 
@@ -70,7 +71,7 @@ bazel build //...
 ### Run
 
 ```bash
-bazel run //:app
+bazel run //tools:aphysics_info
 ```
 
 ### Test

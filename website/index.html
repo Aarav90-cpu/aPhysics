@@ -104,12 +104,12 @@
         <div class="glass-card">
           <div class="card-icon">🎲</div>
           <h3>Deterministic Seeds <span class="badge-pill">Planned</span></h3>
-          <p>Minecraft-style seeds: set <code>1337</code> for 100% frame-reproducible Remotion renders, or use <code>0</code> for random uniqueness.</p>
+          <p>Deterministic Seeds: pass an explicit 64-bit seed (e.g. <code>1337ULL</code>) for reproducible physics simulations across workers.</p>
         </div>
         <div class="glass-card">
           <div class="card-icon">🛠️</div>
           <h3>Clang 23 & Bazel 9</h3>
-          <p>Built strictly with modern Clang 23 and Bazel 9 for fast compile times and deterministic toolchain sandboxing.</p>
+          <p>Built strictly with Clang 23 and Bazel 9 for reproducible builds and deterministic toolchain sandboxing.</p>
         </div>
         <div class="glass-card">
           <div class="card-icon">🤖</div>
@@ -157,7 +157,7 @@ geometry.attributes.position.needsUpdate = true; // WebGL streams directly to GP
         </p>
         <ul>
           <li><strong>Fixed Seed (<code>seed = 1337ULL</code>)</strong>: The internal PRNG produces identical perturbation vectors, folding angles, and tear thresholds every single run.</li>
-          <li><strong>Random Seed (<code>seed = 0</code>)</strong>: Uses entropy to generate a unique animation every time for creative previews.</li>
+          <li><strong>Pure C Engine</strong>: The simulation core never queries system clocks or entropy. Callers or the JavaScript wrapper provide explicit seeds.</li>
           <li><strong>Decoupled Fixed Delta Time (&Delta;t)</strong>: The solver executes on fixed 1/60s intervals, preventing frame-time variation from causing divergence.</li>
         </ul>
       </div>
@@ -188,7 +188,7 @@ geometry.attributes.position.needsUpdate = true; // WebGL streams directly to GP
           aPhysics is configured to compile with Clang 23 and Bazel 9 on macOS, but we need hardware testing to verify:
         </p>
         <ul>
-          <li>Apple Silicon (M1/M2/M3/M4) NEON SIMD vectorization and floating-point determinism.</li>
+          <li>Apple Silicon (M1/M2/M3/M4) compilation and floating-point determinism under Clang 23.</li>
           <li>macOS Command Line Tools and Xcode toolchain compatibility.</li>
           <li>Clean execution of <code>bazel test //...</code> on Darwin kernels.</li>
         </ul>
@@ -210,7 +210,7 @@ bazel build //...
 bazel test //...
 
 # 5. Run executable
-bazel run //:app</code></pre>
+bazel run //tools:aphysics_info</code></pre>
         </div>
 
         <p>

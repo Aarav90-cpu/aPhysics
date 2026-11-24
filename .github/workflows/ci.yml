@@ -68,10 +68,6 @@ jobs:
         run: |
           bazel test --test_output=errors //...
 
-      - name: Verify clean target
-        run: |
-          bazel clean
-
   lint-and-format:
     name: Code Formatting & Static Analysis
     runs-on: ubuntu-latest
@@ -84,7 +80,7 @@ jobs:
           wget -O - https://apt.llvm.org/llvm.sh | sudo bash -s -- 23
           sudo apt-get update
           sudo apt-get install -y cppcheck
-          sudo ln -sf /usr/bin/clang-format-23 /usr/local/bin/clang-format || true
+          sudo ln -sf /usr/bin/clang-format-23 /usr/local/bin/clang-format
 
       - name: Install addlicense
         run: |

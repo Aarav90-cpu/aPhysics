@@ -17,7 +17,7 @@ All automated assistants and contributors working on this repository follow the 
 
 ## Compatibility with `fetchIt`
 
-This documentation structure is fully optimized for **[fetchIt](https://github.com/Aarav90-cpu/fetchIt)**, the documentation crawler and markdown conversion tool created by Aarav (@Aarav90-cpu):
+This documentation structure is formatted for **[fetchIt](https://github.com/Aarav90-cpu/fetchIt)**, the documentation crawler and markdown conversion tool created by Aarav (@Aarav90-cpu):
 
 - A root [`sitemap.xml`](../sitemap.xml) explicitly marked `<!-- For FetchIt -->` indexes all documentation pages.
 - Clean semantic Markdown files with structured headings, code blocks, and diagrams.

@@ -139,10 +139,16 @@ aph_status aph_world_step(aph_world *w) {
 }
 
 uint64_t aph_world_step_count(const aph_world *w) {
+    if (w == NULL) {
+        return 0;
+    }
     return w->step_count;
 }
 
 uint64_t aph_world_hash(const aph_world *w) {
+    if (w == NULL) {
+        return 0;
+    }
     uint64_t h = APH_HASH_INIT;
     h = aph_hash_bytes(&w->config.seed, sizeof(w->config.seed), h);
     h = aph_hash_bytes(&w->step_count, sizeof(w->step_count), h);

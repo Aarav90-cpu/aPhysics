@@ -48,10 +48,10 @@ cd aPhysics
 bazel build //...
 ```
 
-### Run the Physics Engine Executable
+### Run the Physics Engine Information Utility
 
 ```bash
-bazel run //:app
+bazel run //tools:aphysics_info
 ```
 
 ### Execute Tests
