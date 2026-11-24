@@ -16,7 +16,7 @@ All identifiers exposed in the public header (`include/aphysics.h`) must begin w
 All internal functions, variables, macros, and subsystem headers within `src/` must begin with the `aph_` prefix:
 - **Functions**: `aph_arena_alloc`, `aph_rng_next_u64`, `aph_broadphase_update`
 - **Structs / Types**: `aph_status`, `aph_arena`, `aph_vec3`, `aph_mat3`, `aph_spring`
-- **Internal Constants**: `APH_STATUS_OK`, `APH_DEFAULT_ARENA_SIZE`
+- **Internal Constants**: `APH_OK`, `APH_DEFAULT_ARENA_SIZE`
 
 ### Type Naming Style
 - **Rule**: Do **not** use the `_t` suffix for types (e.g. use `aph_status`, `aph_arena`, `aphysics_world`, `aph_vec3`).

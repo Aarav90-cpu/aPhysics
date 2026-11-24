@@ -39,6 +39,21 @@ cc_library(
     includes = ["src"],
 )
 
+cc_library(
+    name = "aph_status",
+    hdrs = ["src/core/aph_status.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+)
+
+cc_library(
+    name = "aph_arena",
+    hdrs = ["src/core/aph_arena.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+    deps = [":aph_status"],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -79,4 +94,32 @@ cc_test(
         "tests",
     ],
     deps = [":aph_rng"],
+)
+
+cc_test(
+    name = "status_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_status.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_status"],
+)
+
+cc_test(
+    name = "arena_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_arena.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_arena"],
 )
