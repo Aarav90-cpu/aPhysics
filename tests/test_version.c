@@ -16,17 +16,23 @@
 
 #include "aph_test.h"
 #include "aphysics.h"
+#include <stdio.h>
 #include <string.h>
 
 int aph_test_failures = 0;
 
 static void test_version_non_empty(void) {
     const char *ver = aphysics_version();
+    char expected[32];
+    int len = snprintf(expected, sizeof(expected), "%d.%d.%d", APHYSICS_VERSION_MAJOR,
+                       APHYSICS_VERSION_MINOR, APHYSICS_VERSION_PATCH);
 
+    APH_CHECK(len > 0 && (size_t)len < sizeof(expected));
     APH_CHECK(ver != NULL);
     if (ver != NULL) {
         APH_CHECK(strlen(ver) > 0);
         APH_CHECK(strcmp(ver, APHYSICS_VERSION_STRING) == 0);
+        APH_CHECK(strcmp(ver, expected) == 0);
     }
 }
 

@@ -16,12 +16,12 @@ A physics engine for Remotion and Three.js animations aiming to bake in cloth mo
 
 ## Current Status
 
-The repository currently contains only the project foundation, compiler toolchain setup, and testing infrastructure:
+The repository is in pre-alpha: build/CI tooling and Phase 1 C core subsystems are implemented, while physics simulation modules are still planned:
 
 - [x] Bazel 9 build system (`9.2.0` pinned in `.bazelversion`)
 - [x] Clang 23+ compiler toolchain configuration in `.bazelrc`
 - [x] C17 standard enforcement
-- [x] Cross-platform GitHub Actions CI (Ubuntu & macOS runners) with `clang-format` and `cppcheck`
+- [x] GitHub Actions CI (`clang-format`, `cppcheck`, ASan/UBSan on Ubuntu; experimental macOS build job)
 - [x] Basic test harness structure in `BUILD.bazel`
 - [x] Phase 1 Core Subsystems (math, splitmix64 PRNG, arena allocator, FNV-1a hashing, status codes, logging, and world skeleton)
 
@@ -93,7 +93,7 @@ For setup instructions and prerequisites, see [docs/getting_started.md](docs/get
 ## Documentation
 
 - [Getting Started Guide](docs/getting_started.md)
-- [Architecture: Design (not implemented)](docs/architecture.md)
+- [Architecture: Engine Design & Core Subsystems](docs/architecture.md)
 - [Looking for macOS Testers!](docs/macos_testers.md)
 - [Agent Skills & Tool Integration](docs/agent_skills.md)
 - [Key Design Decisions](agentrules/NOTE.md)

@@ -18,14 +18,14 @@
 #define APHYSICS_H
 
 #define APHYSICS_VERSION_MAJOR 0
-#define APHYSICS_VERSION_MINOR 1
-#define APHYSICS_VERSION_PATCH 0
-#define APHYSICS_VERSION_STRING "0.1.0"
+#define APHYSICS_VERSION_MINOR 0
+#define APHYSICS_VERSION_PATCH 1
+#define APHYSICS_VERSION_STRING "0.0.1"
 
 /**
  * Returns the version string of the aPhysics library.
  *
- * Returns a constant, null-terminated string (e.g. "0.1.0").
+ * Returns a constant, null-terminated string (e.g. "0.0.1").
  */
 const char *aphysics_version(void);
 

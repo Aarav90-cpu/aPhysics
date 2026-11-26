@@ -17,7 +17,15 @@
 #ifndef APH_RNG_H
 #define APH_RNG_H
 
+#include <stddef.h>
 #include <stdint.h>
+
+#ifndef __wasm__
+#include <assert.h>
+#define APH_RNG_ASSERT(cond) assert(cond)
+#else
+#define APH_RNG_ASSERT(cond) ((void)0)
+#endif
 
 /**
  * 64-bit pseudo-random number generators based on SplitMix64.
@@ -107,6 +115,7 @@ typedef struct aph_rng {
  *   seed: 64-bit seed. Any 64-bit value is valid, including 0.
  */
 static inline void aph_rng_seed(aph_rng *r, uint64_t seed) {
+    APH_RNG_ASSERT(r != NULL);
     r->state = seed;
 }
 
@@ -126,6 +135,7 @@ static inline void aph_rng_seed(aph_rng *r, uint64_t seed) {
  *   Next pseudo-random 64-bit unsigned integer.
  */
 static inline uint64_t aph_rng_next_u64(aph_rng *r) {
+    APH_RNG_ASSERT(r != NULL);
     uint64_t z = (r->state += 0x9e3779b97f4a7c15ULL);
     return aph_splitmix64_mix(z);
 }

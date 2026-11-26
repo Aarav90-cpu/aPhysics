@@ -189,6 +189,19 @@ static void test_log_level_filtering(void) {
     APH_CHECK(cap.call_count == 8);
     APH_CHECK(strcmp(cap.last_msg, "Literal specifiers %s %d %x %p must not crash.") == 0);
 
+    /* 6. Out-of-range log levels in aph_set_log_level clamp to [ERROR, DEBUG] */
+    aph_set_log_level((aph_log_level)-1);
+    aph_log(APH_LOG_WARN, "core", "Clamped to ERROR drops WARN");
+    APH_CHECK(cap.call_count == 8);
+    aph_log(APH_LOG_ERROR, "core", "Clamped to ERROR keeps ERROR");
+    APH_CHECK(cap.call_count == 9);
+
+    aph_set_log_level((aph_log_level)999);
+    aph_log((aph_log_level)500, "core", "Invalid positive level dropped above DEBUG");
+    APH_CHECK(cap.call_count == 9);
+    aph_log(APH_LOG_DEBUG, "core", "Clamped to DEBUG keeps DEBUG");
+    APH_CHECK(cap.call_count == 10);
+
     aph_set_log_callback(NULL, NULL);
     aph_set_log_level(APH_LOG_INFO);
 }

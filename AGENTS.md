@@ -17,12 +17,6 @@ natural instead of static.
 Clang and Bazel were chosen on purpose: Bazel is fast and has good clang
 support, and clang is newer than gcc. Do not suggest switching.
 
-Not decided yet (ask the user, do not guess):
-
-- The project name.
-- How the C code reaches Remotion and three.js (for example, WebAssembly).
-- Which operating systems and CPU architectures are officially supported.
-
 ## 2. Working rules
 
 ### Understand first

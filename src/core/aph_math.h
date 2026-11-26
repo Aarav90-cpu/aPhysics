@@ -18,6 +18,14 @@
 #define APH_MATH_H
 
 #include <math.h>
+#include <stddef.h>
+
+#ifndef __wasm__
+#include <assert.h>
+#define APH_MATH_ASSERT(cond) assert(cond)
+#else
+#define APH_MATH_ASSERT(cond) ((void)0)
+#endif
 
 /**
  * Squared length threshold below which a vector is treated as zero during normalization.
@@ -445,6 +453,7 @@ static inline aph_mat3 aph_mat3_from_quat(aph_quat q) {
  *   Transformed vector M * v.
  */
 static inline aph_vec3 aph_mat3_mul_vec3(const aph_mat3 *m, aph_vec3 v) {
+    APH_MATH_ASSERT(m != NULL);
     return aph_vec3_make(m->m[0] * v.x + m->m[1] * v.y + m->m[2] * v.z,
                          m->m[3] * v.x + m->m[4] * v.y + m->m[5] * v.z,
                          m->m[6] * v.x + m->m[7] * v.y + m->m[8] * v.z);
@@ -463,6 +472,7 @@ static inline aph_vec3 aph_mat3_mul_vec3(const aph_mat3 *m, aph_vec3 v) {
  *   Transposed matrix M^T.
  */
 static inline aph_mat3 aph_mat3_transpose(const aph_mat3 *m) {
+    APH_MATH_ASSERT(m != NULL);
     aph_mat3 res;
     res.m[0] = m->m[0];
     res.m[1] = m->m[3];

@@ -112,14 +112,11 @@ aph_status aph_world_step(aph_world *w);
 /**
  * Returns the total number of simulation steps completed by the world.
  *
- * Preconditions:
- *   w must not be NULL.
- *
  * Inputs:
- *   w: Pointer to simulation world.
+ *   w: Pointer to simulation world. May be NULL.
  *
  * Returns:
- *   Cumulative step count.
+ *   Cumulative step count, or 0 if w is NULL.
  */
 uint64_t aph_world_step_count(const aph_world *w);
 
@@ -138,13 +135,13 @@ uint64_t aph_world_step_count(const aph_world *w);
  *   Total bytes hashed: 36 bytes.
  *
  * Preconditions:
- *   w must not be NULL. State must not contain NaNs.
+ *   If w is non-NULL, state must not contain NaNs.
  *
  * Inputs:
- *   w: Pointer to simulation world.
+ *   w: Pointer to simulation world. May be NULL.
  *
  * Returns:
- *   64-bit state hash.
+ *   64-bit state hash, or 0 if w is NULL.
  */
 uint64_t aph_world_hash(const aph_world *w);
 

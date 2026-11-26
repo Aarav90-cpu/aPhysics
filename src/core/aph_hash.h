@@ -25,6 +25,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef __wasm__
+#include <assert.h>
+#define APH_HASH_ASSERT(cond) assert(cond)
+#else
+#define APH_HASH_ASSERT(cond) ((void)0)
+#endif
+
 /**
  * 64-bit Fowler-Noll-Vo (FNV-1a) initial offset basis.
  */
@@ -55,8 +62,8 @@
  *   - Platform portability: hashes of raw float arrays are only comparable across little-endian
  * targets.
  *   - NaN bit representations: NaN encodings frequently differ between CPU architectures (e.g. x86
- * vs ARM). State hashes are only meaningful if the simulation state contains no NaNs. Call
- * aph_world_validate() first to verify state sanity before hashing.
+ * vs ARM). State hashes are only meaningful if the simulation state contains no NaNs. Verify
+ * simulation state has no NaNs before hashing.
  *   - Struct padding: never hash whole structs directly, because struct padding bytes contain
  * undefined values. Hash individual fields or contiguous flat arrays of floats (e.g. vertex
  * positions, velocities).
@@ -78,6 +85,7 @@
  *   Updated 64-bit FNV-1a hash value.
  */
 static inline uint64_t aph_hash_bytes(const void *data, size_t size, uint64_t state) {
+    APH_HASH_ASSERT(data != NULL || size == 0);
     uint64_t h = (state == 0) ? APH_HASH_INIT : state;
     if (data == NULL || size == 0) {
         return h;

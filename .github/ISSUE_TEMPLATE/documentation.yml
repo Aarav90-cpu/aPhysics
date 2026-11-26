@@ -13,7 +13,7 @@ body:
     attributes:
       label: "Documentation Location"
       description: "Which file, section, or API documentation needs attention?"
-      placeholder: "e.g., README.md, docs/architecture.md, include/app.h header comments..."
+      placeholder: "e.g., README.md, docs/architecture.md, include/aphysics.h header comments..."
     validations:
       required: true
 

@@ -47,11 +47,11 @@ bazel test //...</code></pre>
   architecture: {
     title: "architecture.md",
     content: `
-      <h2>Architecture Design: Zero-Copy Memory & Determinism (Planned)</h2>
-      <p><em>Notice: These architectural specifications represent the planned design for aPhysics.</em></p>
+      <h2>Architecture: Engine Design & Core Subsystems</h2>
+      <p><em>Notice: Higher-level physics simulation models (cloth, collisions, rigid bodies) remain planned. Phase 1 core foundation modules are implemented in <code>src/core/</code>.</em></p>
       
       <h3>1. [Planned] Zero-Copy Memory Sharing</h3>
-      <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics allocates vertex buffers inside this memory and exports the memory offset pointer.</p>
+      <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics plans to allocate vertex buffers inside this memory and export the memory offset pointer.</p>
       <pre><code>// Direct typed array view over WebAssembly linear memory
 const positions = new Float32Array(
     wasmMemory.buffer,
@@ -65,8 +65,18 @@ geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 wasmInstance.exports.aphysics_step(dt);
 geometry.attributes.position.needsUpdate = true;</code></pre>
 
-      <h3>2. Deterministic Simulation via Seeds</h3>
-      <p>Setting a fixed 64-bit seed (e.g. <code>1337</code>) guarantees identical cloth wrinkles, crash deformation, and tears on any machine.</p>
+      <h3>2. [Planned] Deterministic Simulation via Seeds</h3>
+      <p>The pure C core never reads system clocks or entropy; callers pass explicit 64-bit seeds (e.g. <code>1337ULL</code>) and fixed time-steps.</p>
+
+      <h3>3. Core Subsystems (Implemented Baseline)</h3>
+      <ul>
+        <li><code>src/core/aph_math.h</code>: 3D vectors, quaternions, row-major 3x3 matrices.</li>
+        <li><code>src/core/aph_rng.h</code>: SplitMix64 PRNG and stateless coordinate hash.</li>
+        <li><code>src/core/aph_arena.h</code>: 64-byte aligned zero-filled linear arena allocator.</li>
+        <li><code>src/core/aph_hash.h</code>: Little-endian 64-bit FNV-1a state hashing.</li>
+        <li><code>src/core/aph_status.h</code> &amp; <code>aph_log.{h,c}</code>: ABI status codes and freestanding formatter.</li>
+        <li><code>src/core/aph_world.{h,c}</code>: Simulation world skeleton and discrete state hashing.</li>
+      </ul>
     `
   },
   macos_testers: {
@@ -74,13 +84,17 @@ geometry.attributes.position.needsUpdate = true;</code></pre>
     content: `
       <h2>Looking for macOS Testers!</h2>
       <p><strong>Platform Status</strong>: Linux (Tested & Supported) | macOS (Experimental & Untested)</p>
-      <p>While Bazel 9 and Clang 23 support macOS (Apple Silicon arm64 & Intel x86_64), macOS builds are currently experimental and untested on physical hardware.</p>
+      <p>While Bazel 9 and Clang 23 / Xcode 26 support macOS (Apple Silicon arm64 & Intel x86_64), macOS builds remain experimental and untested on physical hardware.</p>
       
-      <h3>How to Test</h3>
-      <pre><code>brew install bazelisk
-git clone git@github.com:Aarav90-cpu/aPhysics.git
+      <h3>Prerequisites &amp; Testing</h3>
+      <ul>
+        <li>Xcode 26.0+ Command Line Tools (Apple Clang 21+) or upstream Clang 23+</li>
+        <li>Bazelisk (<code>brew install bazelisk</code>)</li>
+      </ul>
+      <pre><code>git clone git@github.com:Aarav90-cpu/aPhysics.git
 cd aPhysics
 bazel build //...
+bazel run //tools:aphysics_info
 bazel test //...</code></pre>
 
       <p>Please report any issues or compiler warnings on our GitHub Issues page!</p>
@@ -94,13 +108,13 @@ bazel test //...</code></pre>
       
       <h3>AGENTS.md Guidelines</h3>
       <ul>
-        <li>Strict tooling: Clang 23+ and Bazel 9+ only.</li>
+        <li>Strict tooling: Clang 23+ (or Xcode 26+ Apple Clang 21+ on macOS) and Bazel 9+ only.</li>
         <li>Verification first: Always verify with <code>bazel build //...</code> and <code>bazel test //...</code>.</li>
         <li>Apache 2.0 license headers mandatory via <code>addlicense</code>.</li>
       </ul>
 
       <h3>fetchIt Compatibility</h3>
-      <p>The documentation is formatted for full compatibility with <strong>fetchIt</strong>, the clean markdown web crawler built by Aarav.</p>
+      <p>The documentation is formatted for <strong>fetchIt</strong>, the clean markdown web crawler built by Aarav.</p>
     `
   },
   agents: {

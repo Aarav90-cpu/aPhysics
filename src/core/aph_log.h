@@ -73,6 +73,7 @@ void aph_set_log_callback(aph_log_fn fn, void *user);
  *
  * Thread Safety:
  *   Not thread-safe; set during initialization before creating simulation worlds.
+ *   Out-of-range values are clamped to [APH_LOG_ERROR, APH_LOG_DEBUG].
  *
  * Inputs:
  *   min_level: Minimum severity level to emit.

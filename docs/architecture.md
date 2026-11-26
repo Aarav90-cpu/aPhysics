@@ -81,7 +81,7 @@ For Remotion animation rendering, frame-accurate determinism is critical. Remoti
 
 ## 3. Core Subsystems (Implemented Baseline)
 
-The foundation of the engine is implemented in `src/core/` and verified across Linux and macOS build configurations:
+The core foundation is implemented in `src/core/` and tested on Linux x86_64 (macOS builds remain experimental and unverified):
 
 1. **Vector & Orientation Math (`src/core/aph_math.h`)**:
    - Single-precision 3D vector arithmetic (`aph_vec3`), quaternions (`aph_quat`), and 3x3 matrices (`aph_mat3`) in row-major order.

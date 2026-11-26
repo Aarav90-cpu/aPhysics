@@ -108,6 +108,7 @@ jobs:
             --suppress=checkersReport \
             --error-exitcode=1 \
             -I include \
+            -I src \
             src/
 
   sanitizers:

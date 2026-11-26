@@ -53,7 +53,7 @@ body:
     attributes:
       label: "Environment"
       description: "Operating system, compiler version, and architecture."
-      placeholder: "e.g., Ubuntu 24.04 / GCC 14.2 / x86_64, macOS 15 / Apple Clang 16 / Apple Silicon"
+      placeholder: "e.g., Ubuntu 24.04 / Clang 23 / x86_64, macOS 26 / Apple Clang 21 (Xcode 26) / arm64"
     validations:
       required: true
 

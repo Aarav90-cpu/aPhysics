@@ -46,7 +46,13 @@ void aph_set_log_callback(aph_log_fn fn, void *user) {
 }
 
 void aph_set_log_level(aph_log_level min_level) {
-    g_min_level = min_level;
+    if ((int)min_level < APH_LOG_ERROR) {
+        g_min_level = APH_LOG_ERROR;
+    } else if ((int)min_level > APH_LOG_DEBUG) {
+        g_min_level = APH_LOG_DEBUG;
+    } else {
+        g_min_level = min_level;
+    }
 }
 
 static size_t append_str(char *dst, size_t dst_size, size_t offset, const char *src,

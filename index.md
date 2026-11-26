@@ -9,7 +9,7 @@ Welcome to the documentation portal for **aPhysics**, a physics engine in C for 
 ## Quick Navigation
 
 - [Documentation: Getting Started](docs/getting_started.md)
-- [Architecture: Zero-Copy & Seeds (Planned)](docs/architecture.md)
+- [Architecture: Engine Design & Core Subsystems](docs/architecture.md)
 - [Platform Notice: Looking for macOS Testers!](docs/macos_testers.md)
 - [Agent Standards: Agent Skills & Tools](docs/agent_skills.md)
 - [Interactive Web App](website/index.html)
@@ -19,12 +19,13 @@ Welcome to the documentation portal for **aPhysics**, a physics engine in C for 
 
 ## Current Status & Roadmap
 
-The repository currently provides the build and continuous integration foundation. Physics simulation modules are in active design:
+The repository currently provides the build/CI foundation and Phase 1 C core utilities. Physics simulation modules are still planned:
 
 - [x] Bazel 9 build setup (`9.2.0`)
 - [x] Clang 23+ compiler toolchain configuration
 - [x] C17 standard enforcement via `.bazelrc`
-- [x] Multi-platform CI with `clang-format` and `cppcheck`
+- [x] CI checks (`clang-format`, `cppcheck`, sanitizers on Linux; experimental macOS job)
+- [x] Phase 1 Core Subsystems (`aph_math`, SplitMix64 PRNG, arena allocator, FNV-1a hashing, status codes, logging, and world skeleton)
 - [ ] *[Planned]* Milestone 1: Particle & spring-mass integrator
 - [ ] *[Planned]* Zero-Copy Three.js linear memory bridge
 - [ ] *[Planned]* Deterministic 64-bit seed reproduction
