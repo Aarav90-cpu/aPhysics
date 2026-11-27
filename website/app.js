@@ -48,7 +48,7 @@ bazel test //...</code></pre>
     title: "architecture.md",
     content: `
       <h2>Architecture: Engine Design & Core Subsystems</h2>
-      <p><em>Notice: XPBD stretch/bending constraints, colliders, rigid bodies, and WebAssembly bindings remain Planned. Phase 1 core utilities (<code>src/core/</code>) and Step 2.1 cloth particle storage and substep integration (<code>src/cloth/</code>) are implemented.</em></p>
+      <p><em>Notice: Higher-level physics simulation and WebAssembly bindings remain Planned. Phase 1 core utilities and Phase 2 Step 2.1 are implemented — see <a href="../docs/architecture.md">docs/architecture.md</a> for subsystem details.</em></p>
       
       <h3>1. [Planned] Zero-Copy Memory Sharing</h3>
       <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics plans to allocate vertex buffers inside this memory and export the memory offset pointer.</p>
@@ -68,16 +68,8 @@ geometry.attributes.position.needsUpdate = true;</code></pre>
       <h3>2. [Planned] Deterministic Simulation via Seeds</h3>
       <p>The pure C core never reads system clocks or entropy; callers pass explicit 64-bit seeds (e.g. <code>1337ULL</code>) and fixed time-steps.</p>
 
-      <h3>3. Core Subsystems (Implemented Baseline)</h3>
-      <ul>
-        <li><code>src/core/aph_math.h</code>: 3D vectors, quaternions, row-major 3x3 matrices.</li>
-        <li><code>src/core/aph_rng.h</code>: SplitMix64 PRNG and stateless coordinate hash.</li>
-        <li><code>src/core/aph_arena.h</code>: 64-byte aligned zero-filled linear arena allocator.</li>
-        <li><code>src/core/aph_hash.h</code>: Little-endian 64-bit FNV-1a state hashing.</li>
-        <li><code>src/core/aph_status.h</code> &amp; <code>aph_log.{h,c}</code>: ABI status codes and freestanding formatter.</li>
-        <li><code>src/core/aph_world.{h,c}</code>: Simulation world skeleton and discrete state hashing.</li>
-        <li><code>src/cloth/aph_cloth.h</code> &amp; <code>src/cloth/particles.c</code>: Step 2.1 cloth particle arrays (16-byte aligned interleaved <code>xyz</code> positions), <code>pin</code>/<code>unpin</code>, and substep integration with linear damping (constraints and colliders Planned).</li>
-      </ul>
+      <h3>3. Implemented Subsystems</h3>
+      <p>Phase 1 Core &amp; Phase 2 Step 2.1 are implemented; see <a href="../docs/architecture.md">docs/architecture.md</a> for the full module list and status.</p>
     `
   },
   macos_testers: {

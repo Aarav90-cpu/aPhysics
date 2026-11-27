@@ -10,21 +10,20 @@
 
 A physics engine for Remotion and Three.js animations aiming to bake in cloth movement, crash dynamics, deformation, and physical constraints so that animations appear natural, dynamic, and lifelike instead of static.
 
-> **Status: pre-alpha (Phase 2 in progress — native cloth particle integration; constraints and colliders planned).**
+> **Status: pre-alpha (Phase 2 in progress). See [docs/architecture.md](docs/architecture.md) for implemented subsystems.**
 
 ---
 
 ## Current Status
 
-The repository contains the build/CI foundation, Phase 1 C core utilities, and Step 2.1 of the native cloth simulation module (no constraints, colliders, rigid bodies, or WebAssembly exports yet):
+The build/CI foundation and Phase 1 C core utilities are in place, and Phase 2 (native cloth) is in progress. See [docs/architecture.md](docs/architecture.md) for implemented module details.
 
 - [x] Bazel 9 build system (`9.2.0` pinned in `.bazelversion`)
 - [x] Clang 23+ compiler toolchain configuration in `.bazelrc`
 - [x] C17 standard enforcement
 - [x] GitHub Actions CI (`clang-format`, `cppcheck`, ASan/UBSan on Ubuntu; experimental macOS build job)
 - [x] Basic test harness structure in `BUILD.bazel`
-- [x] Phase 1 Core Subsystems (math, splitmix64 PRNG, arena allocator, FNV-1a hashing, status codes, logging, and world skeleton)
-- [x] Step 2.1 Cloth Integration Skeleton (`aph_cloth_create`, interleaved `xyz` positions, `pin`/`unpin`, substep gravity + linear damping integration, world state hashing)
+- [x] Phase 1 Core & Phase 2 Step 2.1 Cloth Particles — see [docs/architecture.md](docs/architecture.md)
 
 ---
 
