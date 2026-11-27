@@ -290,7 +290,7 @@ aph_status aph_cloth_positions(const aph_world *w, uint32_t cloth_id, const floa
     return APH_OK;
 }
 
-aph_status aph_cloth_pin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index) {
+aph_status aph_cloth_pin(const aph_world *w, uint32_t cloth_id, uint32_t vertex_index) {
     aph_cloth *c = find_cloth(w, cloth_id);
     if (c == NULL || vertex_index >= c->vertex_count) {
         return APH_ERR_INVALID_ARGUMENT;
@@ -307,7 +307,7 @@ aph_status aph_cloth_pin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index)
     return APH_OK;
 }
 
-aph_status aph_cloth_unpin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index) {
+aph_status aph_cloth_unpin(const aph_world *w, uint32_t cloth_id, uint32_t vertex_index) {
     aph_cloth *c = find_cloth(w, cloth_id);
     if (c == NULL || vertex_index >= c->vertex_count) {
         return APH_ERR_INVALID_ARGUMENT;

@@ -110,7 +110,7 @@ aph_status aph_cloth_positions(const aph_world *w, uint32_t cloth_id, const floa
  *   APH_OK on success.
  *   APH_ERR_INVALID_ARGUMENT if w is NULL, cloth_id is invalid, or vertex_index >= vertex_count.
  */
-aph_status aph_cloth_pin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index);
+aph_status aph_cloth_pin(const aph_world *w, uint32_t cloth_id, uint32_t vertex_index);
 
 /**
  * Unpins a cloth vertex, restoring its default uniform inverse mass.
@@ -124,6 +124,6 @@ aph_status aph_cloth_pin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index)
  *   APH_OK on success.
  *   APH_ERR_INVALID_ARGUMENT if w is NULL, cloth_id is invalid, or vertex_index >= vertex_count.
  */
-aph_status aph_cloth_unpin(aph_world *w, uint32_t cloth_id, uint32_t vertex_index);
+aph_status aph_cloth_unpin(const aph_world *w, uint32_t cloth_id, uint32_t vertex_index);
 
 #endif /* APH_CLOTH_H */
