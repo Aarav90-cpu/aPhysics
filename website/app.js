@@ -48,7 +48,7 @@ bazel test //...</code></pre>
     title: "architecture.md",
     content: `
       <h2>Architecture: Engine Design & Core Subsystems</h2>
-      <p><em>Notice: Higher-level physics simulation and WebAssembly bindings remain Planned. Phase 1 core utilities and Phase 2 Steps 2.1–2.2 are implemented — see <a href="../docs/architecture.md">docs/architecture.md</a> for subsystem details.</em></p>
+      <p><em>Notice: Higher-level physics simulation and WebAssembly bindings remain Planned. Phase 1 core utilities and Phase 2 Steps 2.1–2.3 are implemented — see <a href="../docs/architecture.md">docs/architecture.md</a> for subsystem details.</em></p>
       
       <h3>1. [Planned] Zero-Copy Memory Sharing</h3>
       <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics plans to allocate vertex buffers inside this memory and export the memory offset pointer.</p>
@@ -69,7 +69,7 @@ geometry.attributes.position.needsUpdate = true;</code></pre>
       <p>The pure C core never reads system clocks or entropy; callers pass explicit 64-bit seeds (e.g. <code>1337ULL</code>) and fixed time-steps.</p>
 
       <h3>3. Implemented Subsystems</h3>
-      <p>Phase 1 Core &amp; Phase 2 Steps 2.1–2.2 are implemented; see <a href="../docs/architecture.md">docs/architecture.md</a> for the full module list and status.</p>
+      <p>Phase 1 Core &amp; Phase 2 Steps 2.1–2.3 are implemented; see <a href="../docs/architecture.md">docs/architecture.md</a> for the full module list and status.</p>
     `
   },
   macos_testers: {

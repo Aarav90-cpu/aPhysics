@@ -90,8 +90,14 @@ cc_library(
 
 cc_library(
     name = "aph_cloth",
-    srcs = ["src/cloth/particles.c"],
-    hdrs = ["src/cloth/aph_cloth.h"],
+    srcs = [
+        "src/cloth/particles.c",
+        "src/cloth/stretch.c",
+    ],
+    hdrs = [
+        "src/cloth/aph_cloth.h",
+        "src/cloth/aph_cloth_internal.h",
+    ],
     copts = APH_COPTS,
     includes = ["src"],
     deps = [
@@ -99,6 +105,7 @@ cc_library(
         ":aph_hash",
         ":aph_log",
         ":aph_math",
+        ":aph_mesh",
         ":aph_status",
         ":aph_world",
     ],

@@ -15,6 +15,7 @@
  */
 
 #include "cloth/aph_cloth.h"
+#include "cloth/aph_cloth_internal.h"
 #include "core/aph_arena.h"
 #include "core/aph_hash.h"
 #include "core/aph_log.h"
@@ -22,20 +23,6 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
-
-typedef struct aph_cloth {
-    uint32_t id;
-    uint32_t vertex_count;
-    float mass;
-    float damping;
-    float thickness;
-    float default_inv_mass;
-    float *positions;
-    float *prev_positions;
-    float *velocities;
-    float *inv_masses;
-    struct aph_cloth *next;
-} aph_cloth;
 
 static aph_cloth *find_cloth(const aph_world *w, uint32_t cloth_id) {
     if (w == NULL || cloth_id >= w->cloth_count) {
@@ -82,7 +69,12 @@ static aph_status aph_cloth_world_substep(aph_world *w, float h) {
             }
         }
 
-        /* Step 2.1: constraints (step 2.2+) and colliders (step 2.6+) are not active yet. */
+        /* Solve distance constraints once in deterministic edge order (Step 2.3). */
+        aph_cloth_stretch_solve(c->mesh_edges.edges, c->stretch_rest_lengths,
+                                c->mesh_edges.edge_count, c->stretch_compliance, c->inv_masses,
+                                c->positions, h);
+
+        /* Step 2.5+ (bending) and Step 2.6+ (colliders) are not active yet. */
 
         /* Derive post-solve velocities and apply linear substep damping. */
         float damp_factor = 1.0f - c->damping * h;
@@ -121,9 +113,13 @@ static uint64_t aph_cloth_world_hash(const aph_world *w, uint64_t state) {
         h = aph_hash_bytes(&c->mass, sizeof(c->mass), h);
         h = aph_hash_bytes(&c->damping, sizeof(c->damping), h);
         h = aph_hash_bytes(&c->thickness, sizeof(c->thickness), h);
+        h = aph_hash_bytes(&c->stretch_compliance, sizeof(c->stretch_compliance), h);
+        h = aph_hash_bytes(&c->mesh_edges.edge_count, sizeof(c->mesh_edges.edge_count), h);
         h = aph_hash_bytes(c->positions, vec_bytes, h);
         h = aph_hash_bytes(c->velocities, vec_bytes, h);
         h = aph_hash_bytes(c->inv_masses, invm_bytes, h);
+        h = aph_cloth_stretch_hash(c->mesh_edges.edges, c->stretch_rest_lengths,
+                                   c->mesh_edges.edge_count, h);
 
         c = c->next;
     }
@@ -168,6 +164,22 @@ aph_status aph_cloth_create(aph_world *w, const aph_cloth_config *cfg, uint32_t 
         aph_log(APH_LOG_ERROR, "cloth",
                 "Invalid thickness: thickness must be non-negative and finite. Check thickness in "
                 "cloth config.");
+        return APH_ERR_INVALID_ARGUMENT;
+    }
+    if (!isfinite(cfg->stretch_compliance) || cfg->stretch_compliance < 0.0f) {
+        aph_log(APH_LOG_ERROR, "cloth",
+                "Invalid stretch_compliance: compliance must be non-negative and finite. Check "
+                "stretch_compliance in cloth config.");
+        return APH_ERR_INVALID_ARGUMENT;
+    }
+    if (cfg->tri_count == 0U && cfg->indices != NULL) {
+        aph_log(APH_LOG_ERROR, "cloth",
+                "Invalid mesh arguments: indices must be NULL when tri_count is 0.");
+        return APH_ERR_INVALID_ARGUMENT;
+    }
+    if (cfg->tri_count > 0U && cfg->indices == NULL) {
+        aph_log(APH_LOG_ERROR, "cloth",
+                "Invalid mesh arguments: indices must not be NULL when tri_count > 0.");
         return APH_ERR_INVALID_ARGUMENT;
     }
 
@@ -240,17 +252,27 @@ aph_status aph_cloth_create(aph_world *w, const aph_cloth_config *cfg, uint32_t 
     c->mass = cfg->mass;
     c->damping = cfg->damping;
     c->thickness = cfg->thickness;
+    c->stretch_compliance = cfg->stretch_compliance;
     c->default_inv_mass = inv_mass;
     c->positions = (float *)pos_mem;
     c->prev_positions = (float *)prev_mem;
     c->velocities = (float *)vel_mem;
     c->inv_masses = (float *)invm_mem;
+    c->mesh_edges.edges = NULL;
+    c->mesh_edges.edge_count = 0U;
+    c->stretch_rest_lengths = NULL;
     c->next = NULL;
 
     __builtin_memcpy(c->positions, cfg->positions, vec_bytes);
     __builtin_memcpy(c->prev_positions, cfg->positions, vec_bytes);
     for (uint32_t i = 0; i < cfg->vertex_count; ++i) {
         c->inv_masses[i] = inv_mass;
+    }
+
+    status = aph_cloth_stretch_build(c, cfg->indices, cfg->tri_count, &w->arena);
+    if (status != APH_OK) {
+        (void)aph_arena_rewind(&w->arena, mark);
+        return status;
     }
 
     if (w->cloths_tail == NULL) {
@@ -314,5 +336,30 @@ aph_status aph_cloth_unpin(const aph_world *w, uint32_t cloth_id, uint32_t verte
     }
 
     c->inv_masses[vertex_index] = c->default_inv_mass;
+    return APH_OK;
+}
+
+aph_status aph_cloth_set_position(const aph_world *w, uint32_t cloth_id, uint32_t vertex_index,
+                                  aph_vec3 pos) {
+    aph_cloth *c = find_cloth(w, cloth_id);
+    if (c == NULL || vertex_index >= c->vertex_count) {
+        return APH_ERR_INVALID_ARGUMENT;
+    }
+    if (!isfinite(pos.x) || !isfinite(pos.y) || !isfinite(pos.z)) {
+        aph_log(APH_LOG_ERROR, "cloth",
+                "Invalid position: vertex coordinates must be finite numbers. Check pos.");
+        return APH_ERR_INVALID_ARGUMENT;
+    }
+
+    const size_t idx = (size_t)vertex_index * 3U;
+    c->positions[idx + 0U] = pos.x;
+    c->positions[idx + 1U] = pos.y;
+    c->positions[idx + 2U] = pos.z;
+    c->prev_positions[idx + 0U] = pos.x;
+    c->prev_positions[idx + 1U] = pos.y;
+    c->prev_positions[idx + 2U] = pos.z;
+    c->velocities[idx + 0U] = 0.0f;
+    c->velocities[idx + 1U] = 0.0f;
+    c->velocities[idx + 2U] = 0.0f;
     return APH_OK;
 }
