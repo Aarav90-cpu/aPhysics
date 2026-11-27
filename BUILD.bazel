@@ -104,6 +104,19 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "aph_mesh",
+    srcs = ["src/mesh/aph_mesh.c"],
+    hdrs = ["src/mesh/aph_mesh.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+    deps = [
+        ":aph_arena",
+        ":aph_log",
+        ":aph_status",
+    ],
+)
+
 cc_test(
     name = "version_test",
     srcs = [
@@ -228,4 +241,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_cloth"],
+)
+
+cc_test(
+    name = "mesh_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_mesh.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_mesh"],
 )

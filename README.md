@@ -23,7 +23,7 @@ The build/CI foundation and Phase 1 C core utilities are in place, and Phase 2 (
 - [x] C17 standard enforcement
 - [x] GitHub Actions CI (`clang-format`, `cppcheck`, ASan/UBSan on Ubuntu; experimental macOS build job)
 - [x] Basic test harness structure in `BUILD.bazel`
-- [x] Phase 1 Core & Phase 2 Step 2.1 Cloth Particles — see [docs/architecture.md](docs/architecture.md)
+- [x] Phase 1 Core & Phase 2 Steps 2.1–2.2 (Cloth Particles, Mesh Topology) — see [docs/architecture.md](docs/architecture.md)
 
 ---
 

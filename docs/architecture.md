@@ -1,6 +1,6 @@
 # Architecture: Engine Design & Core Subsystems
 
-> **Notice**: Higher-level solver features (XPBD distance and bending constraints, colliders, friction, rigid bodies, and WebAssembly/Three.js bindings) remain **Planned**. **Phase 1 core utilities (`src/core/`) and Step 2.1 native cloth vertex storage, pinning, and substep integration (`src/cloth/`) are implemented.**
+> **Notice**: Higher-level solver features (XPBD distance and bending constraints, colliders, friction, rigid bodies, and WebAssembly/Three.js bindings) remain **Planned**. **Phase 1 core utilities (`src/core/`) and Phase 2 Steps 2.1–2.2 (`src/cloth/`, `src/mesh/`) are implemented.**
 
 aPhysics is designed specifically to eliminate performance bottlenecks when streaming simulation data into Three.js inside Remotion video rendering pipelines.
 
@@ -112,3 +112,7 @@ The core foundation is implemented in `src/core/` and tested on Linux x86_64 (ma
    - 16-byte aligned particle buffers (`positions` as interleaved `xyz` floats, `prev_positions`, `velocities`, `inv_masses`).
    - `aph_cloth_pin()` / `aph_cloth_unpin()` support and per-substep semi-implicit integration with velocity derivation (`v = (x - prev) / h`) and linear velocity damping (`max(0, 1 - damping * h)`).
    - Constraints (XPBD stretch/bend) and colliders are **Planned** (not active yet).
+9. **Mesh Topology (`src/mesh/aph_mesh.h`, `src/mesh/aph_mesh.c`, Step 2.2)**:
+   - `aph_mesh_build_edges()` extracts unique undirected edges `(v0 < v1)` from indexed triangle lists, recording adjacent triangle indices (`tri0`, `tri1`) and opposite vertex indices (`opp0`, `opp1`, or `APH_MESH_INVALID_INDEX` on boundary edges).
+   - Validates non-NULL arguments, `tri_count > 0`, indices `< vertex_count`, non-degenerate triangles, no duplicated triangles (`APH_ERR_INVALID_ARGUMENT`), and manifold edge degree at most 2 (`APH_ERR_UNSUPPORTED` when 3+ triangles share an edge), rewinding the arena on failure.
+   - Allocates a single `3 * tri_count` `aph_mesh_edge` block (16-byte aligned) in `aph_arena`, runs an in-place iterative heapsort ordered by `(v0, v1, tri0)` for deterministic cross-platform order, compacts unique edges in place, and trims the unused tail via `aph_arena_rewind()`.

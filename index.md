@@ -25,7 +25,7 @@ The build/CI foundation is in place, Phase 1 C core utilities are complete, and 
 - [x] Clang 23+ compiler toolchain configuration
 - [x] C17 standard enforcement via `.bazelrc`
 - [x] CI checks (`clang-format`, `cppcheck`, sanitizers on Linux; experimental macOS job)
-- [x] Phase 1 Core & Phase 2 Step 2.1 — see [docs/architecture.md](docs/architecture.md)
+- [x] Phase 1 Core & Phase 2 Steps 2.1–2.2 — see [docs/architecture.md](docs/architecture.md)
 - [ ] *[Planned]* Milestone 1: Particle & spring-mass integrator
 - [ ] *[Planned]* Zero-Copy Three.js linear memory bridge
 - [ ] *[Planned]* Deterministic 64-bit seed reproduction
