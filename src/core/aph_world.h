@@ -132,7 +132,9 @@ uint64_t aph_world_step_count(const aph_world *w);
  *     5. gravity.x  (float,    4 bytes, IEEE 754 little-endian)
  *     6. gravity.y  (float,    4 bytes, IEEE 754 little-endian)
  *     7. gravity.z  (float,    4 bytes, IEEE 754 little-endian)
- *   Total bytes hashed: 36 bytes.
+ *   Total world header bytes hashed: 36 bytes.
+ *   If cloths are attached, each cloth's state is appended in insertion order
+ *   (see src/cloth/aph_cloth.h for the per-cloth byte layout).
  *
  * Preconditions:
  *   If w is non-NULL, state must not contain NaNs.

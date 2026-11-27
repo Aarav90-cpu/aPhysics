@@ -19,13 +19,14 @@ Welcome to the documentation portal for **aPhysics**, a physics engine in C for 
 
 ## Current Status & Roadmap
 
-The repository currently provides the build/CI foundation and Phase 1 C core utilities. Physics simulation modules are still planned:
+The repository currently provides the build/CI foundation, Phase 1 C core utilities, and Step 2.1 cloth particle integration. Constraint solving, collisions, and WebAssembly bindings remain **Planned**:
 
 - [x] Bazel 9 build setup (`9.2.0`)
 - [x] Clang 23+ compiler toolchain configuration
 - [x] C17 standard enforcement via `.bazelrc`
 - [x] CI checks (`clang-format`, `cppcheck`, sanitizers on Linux; experimental macOS job)
 - [x] Phase 1 Core Subsystems (`aph_math`, SplitMix64 PRNG, arena allocator, FNV-1a hashing, status codes, logging, and world skeleton)
+- [x] Step 2.1 Cloth Integration Skeleton (arena-backed cloth storage, `pin`/`unpin`, interleaved `xyz` positions, substep gravity & damping)
 - [ ] *[Planned]* Milestone 1: Particle & spring-mass integrator
 - [ ] *[Planned]* Zero-Copy Three.js linear memory bridge
 - [ ] *[Planned]* Deterministic 64-bit seed reproduction

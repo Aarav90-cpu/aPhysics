@@ -48,7 +48,7 @@ bazel test //...</code></pre>
     title: "architecture.md",
     content: `
       <h2>Architecture: Engine Design & Core Subsystems</h2>
-      <p><em>Notice: Higher-level physics simulation models (cloth, collisions, rigid bodies) remain planned. Phase 1 core foundation modules are implemented in <code>src/core/</code>.</em></p>
+      <p><em>Notice: XPBD stretch/bending constraints, colliders, rigid bodies, and WebAssembly bindings remain Planned. Phase 1 core utilities (<code>src/core/</code>) and Step 2.1 cloth particle storage and substep integration (<code>src/cloth/</code>) are implemented.</em></p>
       
       <h3>1. [Planned] Zero-Copy Memory Sharing</h3>
       <p>WebAssembly memory is backed by a contiguous <code>ArrayBuffer</code>. aPhysics plans to allocate vertex buffers inside this memory and export the memory offset pointer.</p>
@@ -76,6 +76,7 @@ geometry.attributes.position.needsUpdate = true;</code></pre>
         <li><code>src/core/aph_hash.h</code>: Little-endian 64-bit FNV-1a state hashing.</li>
         <li><code>src/core/aph_status.h</code> &amp; <code>aph_log.{h,c}</code>: ABI status codes and freestanding formatter.</li>
         <li><code>src/core/aph_world.{h,c}</code>: Simulation world skeleton and discrete state hashing.</li>
+        <li><code>src/cloth/aph_cloth.h</code> &amp; <code>src/cloth/particles.c</code>: Step 2.1 cloth particle arrays (16-byte aligned interleaved <code>xyz</code> positions), <code>pin</code>/<code>unpin</code>, and substep integration with linear damping (constraints and colliders Planned).</li>
       </ul>
     `
   },

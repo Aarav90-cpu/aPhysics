@@ -1,6 +1,6 @@
 # Architecture: Engine Design & Core Subsystems
 
-> **Notice**: The higher-level physics simulation models (cloth, collisions, rigid bodies) described in this document represent planned features. **Phase 1 core foundation modules (math, PRNG, arena allocator, state hashing, logging, status codes, and world skeleton) are implemented in `src/core/`.**
+> **Notice**: Higher-level solver features (XPBD distance and bending constraints, colliders, friction, rigid bodies, and WebAssembly/Three.js bindings) remain **Planned**. **Phase 1 core utilities (`src/core/`) and Step 2.1 native cloth vertex storage, pinning, and substep integration (`src/cloth/`) are implemented.**
 
 aPhysics is designed specifically to eliminate performance bottlenecks when streaming simulation data into Three.js inside Remotion video rendering pipelines.
 
@@ -106,4 +106,9 @@ The core foundation is implemented in `src/core/` and tested on Linux x86_64 (ma
 7. **Simulation World Skeleton (`src/core/aph_world.h`, `src/core/aph_world.c`)**:
    - Opaque `aph_world` handle managing contiguous host memory for the world struct and arena backing buffer.
    - Strict input validation on time-step (`fixed_dt <= 1.0s`), substep limits, and non-NaN gravity.
-   - Little-endian discrete field state hashing (`aph_world_hash`) covering 36 bytes of state without struct padding.
+   - Little-endian discrete field state hashing (`aph_world_hash`) covering 36 bytes of world header plus attached cloths.
+8. **Cloth Particle Storage & Substep Integration (`src/cloth/aph_cloth.h`, `src/cloth/particles.c`, Step 2.1)**:
+   - Singly linked list of `aph_cloth` records stored in `aph_world` in insertion order (`uint32_t` id), rolled back via `aph_arena_mark`/`aph_arena_rewind` on creation failure.
+   - 16-byte aligned particle buffers (`positions` as interleaved `xyz` floats, `prev_positions`, `velocities`, `inv_masses`).
+   - `aph_cloth_pin()` / `aph_cloth_unpin()` support and per-substep semi-implicit integration with velocity derivation (`v = (x - prev) / h`) and linear velocity damping (`max(0, 1 - damping * h)`).
+   - Constraints (XPBD stretch/bend) and colliders are **Planned** (not active yet).

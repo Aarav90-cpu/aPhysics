@@ -73,7 +73,10 @@ cc_library(
 cc_library(
     name = "aph_world",
     srcs = ["src/core/aph_world.c"],
-    hdrs = ["src/core/aph_world.h"],
+    hdrs = [
+        "src/core/aph_world.h",
+        "src/core/aph_world_internal.h",
+    ],
     copts = APH_COPTS,
     includes = ["src"],
     deps = [
@@ -82,6 +85,22 @@ cc_library(
         ":aph_log",
         ":aph_math",
         ":aph_status",
+    ],
+)
+
+cc_library(
+    name = "aph_cloth",
+    srcs = ["src/cloth/particles.c"],
+    hdrs = ["src/cloth/aph_cloth.h"],
+    copts = APH_COPTS,
+    includes = ["src"],
+    deps = [
+        ":aph_arena",
+        ":aph_hash",
+        ":aph_log",
+        ":aph_math",
+        ":aph_status",
+        ":aph_world",
     ],
 )
 
@@ -195,4 +214,18 @@ cc_test(
         "tests",
     ],
     deps = [":aph_world"],
+)
+
+cc_test(
+    name = "cloth_test",
+    srcs = [
+        "tests/aph_test.h",
+        "tests/test_cloth.c",
+    ],
+    copts = APH_COPTS,
+    includes = [
+        "src",
+        "tests",
+    ],
+    deps = [":aph_cloth"],
 )

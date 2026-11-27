@@ -18,6 +18,7 @@
 #include "core/aph_arena.h"
 #include "core/aph_hash.h"
 #include "core/aph_log.h"
+#include "core/aph_world_internal.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -34,13 +35,6 @@ static void *aph_world_host_alloc(size_t size) {
 static void aph_world_host_free(void *ptr) {
     free(ptr);
 }
-
-struct aph_world {
-    aph_arena arena;
-    void *raw_memory;
-    aph_world_config config;
-    uint64_t step_count;
-};
 
 aph_status aph_world_create(const aph_world_config *cfg, aph_world **out_world) {
     if (out_world == NULL) {
@@ -134,6 +128,15 @@ aph_status aph_world_step(aph_world *w) {
     if (w == NULL) {
         return APH_ERR_INVALID_ARGUMENT;
     }
+    if (w->substep_fn != NULL) {
+        float h = w->config.fixed_dt / (float)w->config.substeps;
+        for (uint32_t s = 0; s < w->config.substeps; ++s) {
+            aph_status st = w->substep_fn(w, h);
+            if (st != APH_OK) {
+                return st;
+            }
+        }
+    }
     w->step_count++;
     return APH_OK;
 }
@@ -157,5 +160,8 @@ uint64_t aph_world_hash(const aph_world *w) {
     h = aph_hash_bytes(&w->config.gravity.x, sizeof(w->config.gravity.x), h);
     h = aph_hash_bytes(&w->config.gravity.y, sizeof(w->config.gravity.y), h);
     h = aph_hash_bytes(&w->config.gravity.z, sizeof(w->config.gravity.z), h);
+    if (w->hash_ext_fn != NULL) {
+        h = w->hash_ext_fn(w, h);
+    }
     return h;
 }

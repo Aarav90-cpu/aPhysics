@@ -44,11 +44,11 @@ bazel clean
 1. **Compiler Warnings**: Code must compile without warnings under `-Wall -Wextra -Werror`.
 2. **Formatting**: Ensure your code conforms to `.clang-format` before submitting pull requests:
    ```bash
-   clang-format --dry-run --Werror src/core/*.[ch] tests/*.[ch] tools/*.[ch] include/*.h
+   clang-format --dry-run --Werror $(find src include tests tools -type f \( -name "*.c" -o -name "*.h" \))
    ```
 3. **License Headers**: Every new source file must include the Apache 2.0 license header. Apply it using `addlicense`:
    ```bash
-   addlicense -l apache -c "Aarav Ravindra Kharade" -y 2026 src/core/*.[ch] tests/*.[ch] tools/*.[ch] include/*.h tools/aph.bzl tools/check_clang_version.sh BUILD.bazel .bazelrc
+   addlicense -l apache -c "Aarav Ravindra Kharade" -y 2026 $(find . -type f \( -name "*.c" -o -name "*.h" -o -name "*.bzl" -o -name "*.sh" -o -name "BUILD.bazel" -o -name ".bazelrc" \) ! -path "./.git/*")
    ```
 4. **Pull Requests**:
    - Write clear commit messages.
